@@ -50,23 +50,30 @@ Type SceneFile
 	Method Save()
 		Local name:String
 		If (currentlyOpened = "") Or (FileType(currentlyOpened) <> 1) Then
-			name = RequestFile( "Name your file ...", ":css", True, MapWorkingDir)
+			name = RequestFile( "Name your file ...",, True, MapWorkingDir)
 			If name = "" Then Return
 		Else
 			name = currentlyOpened
 		EndIf
+		name = NameCssFile (name)
 		currentlyOpened = name
 		WriteCssFile( name )
 	End Method
 
 	Method SaveAs()
 		Local name:String
-		name = RequestFile( "Name your file ...", ":css", True, MapWorkingDir)
+		name = RequestFile( "Name your file ...",, True, MapWorkingDir)
 		If name = "" Then Return
+		name = NameCssFile (name)
 		currentlyOpened = name
 		WriteCssFile( name )
 	End Method
 	
+	Method NameCssFile:String (name:String)
+		name = StripExt (name)
+		name = name + ".css"
+		Return name
+	End Method
 	
 '--------------------------------------------------------------------------
 ' * Write XML SceneFile to disk
@@ -190,8 +197,9 @@ Type SceneFile
 			val = GadgetText (j.labelValue)
 			returnString = returnString + prop + ":" + val + ";"
 		Next
+		returnString:+"}"
 		If SceneProperty.size > 1
-			returnString = returnString + "}~nProperties{"
+			returnString = returnString + "~nProperties{"
 			For i = EachIn SceneProperty.List
 				prop = GadgetText (i.labelProperty)
 				If (prop = "Property") Or (prop = "") Continue
@@ -583,7 +591,7 @@ Type CssBlock
 		Return result
 	End Method
 	
-	Method GetFloat:Int (propName:String, defaultValue:Float = 0.0)
+	Method GetFloat:Float (propName:String, defaultValue:Float = 0.0)
 		Local result:Float = String (Properties.ValueForKey (propName)).ToFloat()
 		If IsNan (result)
 			Return defaultValue

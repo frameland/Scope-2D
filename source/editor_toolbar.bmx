@@ -85,7 +85,6 @@ Type ExpToolbar Extends TEditorExpansion
 		Select mode
 			Case MODE_EDIT
 				Self.Enable()
-				If editor.exp_options Then editor.exp_options.Enable()
 			Case MODE_COLLISION
 				DisableGadgetItem (toolbar, 4)
 				DisableGadgetItem (toolbar, 5)
@@ -93,15 +92,16 @@ Type ExpToolbar Extends TEditorExpansion
 				EnableGadgetItem (toolbar, 8)
 				EnableGadgetItem (toolbar, 9)
 				EnableGadgetItem (toolbar, 10)
-				If editor.exp_options Then editor.exp_options.Disable()
 			Case MODE_EVENT
+				If selected = 3
+					OnClick (8)
+				EndIf
 				DisableGadgetItem (toolbar, 4)
 				DisableGadgetItem (toolbar, 5)
 				EnableGadgetItem (toolbar, 7)
 				EnableGadgetItem (toolbar, 8)
 				EnableGadgetItem (toolbar, 9)
 				DisableGadgetItem (toolbar, 10)
-				If editor.exp_options Then editor.exp_options.Disable()
 			Default
 				Throw ("Unknown mode!")
 		End Select

@@ -629,6 +629,8 @@ Type EditorWorld Extends TWorld
 '--------------------------------------------------------------------------
 	Method NrOfSelectedEntities:Int()
 		Local List:TList = GetRightEntityList()
+		If Not List Return 0
+			
 		Local entity:TEntity
 		Local counter:Int = 0
 		For entity = EachIn List
@@ -684,12 +686,15 @@ Type EditorWorld Extends TWorld
 	End Method
 	
 	Method GetRightEntityList:TList()
+		If Not editor
+			Return Null
+		EndIf
 		If editor.exp_toolbar.mode = MODE_EDIT
 			Return EntityList
 		ElseIf editor.exp_toolbar.mode = MODE_COLLISION
 			Return Polys
 		EndIf
-		Return EntityList
+		Return Null
 	End Method
 	
 	Method OnRightClick()
