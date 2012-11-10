@@ -1,0 +1,14 @@
+Alpha 3:
+	- Position, Scaling & Rotation can now be set using the keyboard in the inspector
+	- Now supports Fullscreen (OSX only)
+	- Fixed Issue where Scope2D wouldn't open a scene on OSX 10.8
+	- Small overall improvements
+
+Alpha 2:
+  - AutoTools: Use tools without selecting anything before
+  - Enhanced Scene-Properties: Redesigned GUI, Normal Properties added (Menu->Scene->Properties)
+  - World Borders: so you know big your world is
+  - Move selected objects with direction keys by 1 pixel
+
+Alpha:
+  - Initial Release

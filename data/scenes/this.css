@@ -1,0 +1,8 @@
+General{Width:2500;Height:1000;Layers:5;}
+Properties{Du:3;Hey:1;Mekka:5;}
+sprite1{x:176;y:311;rotation:25;image:c1-br.png;}
+sprite2{x:214;y:406;rotation:25;image:c1-br.png;}
+sprite3{x:461;y:299;image:Brown Block.png;}
+sprite4{x:428;y:227;image:Brown Block.png;}
+poly1{data:135,196,563,297,126,234,554,335;}
+poly2{data:378,184,478,189,377,204,477,209;}
