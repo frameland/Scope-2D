@@ -29,7 +29,7 @@ Type SceneFile
 			path = RequestFile("Please Choose a SceneFile ...", ":css", False, MapWorkingDir)
 		EndIf
 		If path Then
-			If Not Load( path )
+			If Not LoadCss ( path )
 				path = ""
 				currentlyOpened = ""
 				Return
@@ -49,7 +49,7 @@ Type SceneFile
 '--------------------------------------------------------------------------
 	Method Save()
 		Local name:String
-		If (currentlyOpened = "") Or (FileType(currentlyOpened) <> 1) Then
+		If (currentlyOpened = "")
 			name = RequestFile( "Name your file ...",, True, MapWorkingDir)
 			If name = "" Then Return
 		Else
@@ -136,40 +136,44 @@ Type SceneFile
 		Local text:String
 		Local entity:TEntity
 		Local i:Int
-		For entity = EachIn world.EntityList
-			i:+1
-			stream.WriteString( "sprite" + i + "{" )
-			Local p:Int
-			If entity.position.x <> 0.0 Then stream.WriteString( "x:" + Int(entity.position.x) + sc)
-			If entity.position.y <> 0.0 Then stream.WriteString( "y:" + Int(entity.position.y) + sc)
-			p = String(entity.scale.sx).Find(".")
-			If entity.scale.sx <> 1.0 	Then stream.WriteString( "scalex:" + String(entity.scale.sx)[..p+3] + sc)
-			p = String(entity.scale.sy).Find(".")
-			If entity.scale.sy <> 1.0 	Then stream.WriteString( "scaley:" + String(entity.scale.sy)[..p+3] + sc)
-			If entity.rotation <> 0.0 	Then stream.WriteString( "rotation:" + Int(entity.rotation) + sc)
-			p = String(entity.color.a).Find(".")
-			If entity.color.a <> 1.0 	Then stream.WriteString( "alpha:" + String(entity.color.a)[..p+3] + sc)
-			If entity.color.r <> 255	Then stream.WriteString( "red:" + entity.color.r + sc)
-			If entity.color.g <> 255	Then stream.WriteString( "green:" + entity.color.g + sc)
-			If entity.color.b <> 255	Then stream.WriteString( "blue:" + entity.color.b + sc)
-			
-			If entity.visible <> 1		Then stream.WriteString( "visible:" + entity.visible + sc )
-			If entity.active <> 0 		Then stream.WriteString( "active:"  + entity.active  + sc )
-			If entity.layer <> 1 		Then stream.WriteString( "layer:"   + entity.layer + sc )
-			If entity.frame <> 0 		Then stream.WriteString( "frame:"   + entity.frame + sc )
-			If entity.name		 		Then stream.WriteString( "name:"    + entity.name  + sc )
-			
-			If entity.texturePath
-				If entity.texturePath.StartsWith(GfxWorkingDir) Then
-					text = entity.texturePath[GfxWorkingDir.Length..]
-				Else
-					text = entity.texturePath
+		For Local layerCounter:Int = 1 Until world.MAX_LAYERS
+			For entity = EachIn world.EntityList
+				If (entity.layer <> layerCounter) Continue 
+				i:+1
+				stream.WriteString( "sprite" + i + "{" )
+				Local p:Int
+				If entity.position.x <> 0.0 Then stream.WriteString( "x:" + Int(entity.position.x) + sc)
+				If entity.position.y <> 0.0 Then stream.WriteString( "y:" + Int(entity.position.y) + sc)
+				p = String(entity.scale.sx).Find(".")
+				If entity.scale.sx <> 1.0 	Then stream.WriteString( "scalex:" + String(entity.scale.sx)[..p+3] + sc)
+				p = String(entity.scale.sy).Find(".")
+				If entity.scale.sy <> 1.0 	Then stream.WriteString( "scaley:" + String(entity.scale.sy)[..p+3] + sc)
+				If entity.rotation <> 0.0 	Then stream.WriteString( "rotation:" + Int(entity.rotation) + sc)
+				p = String(entity.color.a).Find(".")
+				If entity.color.a <> 1.0 	Then stream.WriteString( "alpha:" + String(entity.color.a)[..p+3] + sc)
+				If entity.color.r <> 255	Then stream.WriteString( "red:" + entity.color.r + sc)
+				If entity.color.g <> 255	Then stream.WriteString( "green:" + entity.color.g + sc)
+				If entity.color.b <> 255	Then stream.WriteString( "blue:" + entity.color.b + sc)
+
+				If entity.visible <> 1		Then stream.WriteString( "visible:" + entity.visible + sc )
+				If entity.active <> 0 		Then stream.WriteString( "active:"  + entity.active  + sc )
+				If entity.layer <> 1 		Then stream.WriteString( "layer:"   + entity.layer + sc )
+				If entity.frame <> 0 		Then stream.WriteString( "frame:"   + entity.frame + sc )
+				If entity.name		 		Then stream.WriteString( "name:"    + entity.name  + sc )
+
+				If entity.texturePath
+					If entity.texturePath.StartsWith(GfxWorkingDir) Then
+						text = entity.texturePath[GfxWorkingDir.Length..]
+					Else
+						text = entity.texturePath
+					EndIf
+					stream.WriteString( "image:" + text + sc )
 				EndIf
-				stream.WriteString( "image:" + text + sc )
-			EndIf
-			
-			stream.WriteString ("}~n")
+
+				stream.WriteString ("}~n")
+			Next
 		Next
+		
 		
 		i = 0
 		For entity = EachIn world.Polys
@@ -197,6 +201,8 @@ Type SceneFile
 			val = GadgetText (j.labelValue)
 			returnString = returnString + prop + ":" + val + ";"
 		Next
+		returnString:+ "Sprites:" + TEditor.GetInstance().world.EntityList.Count() + ";"
+		returnString:+ "Polys:" + TEditor.GetInstance().world.Polys.Count() + ";"
 		returnString:+"}"
 		If SceneProperty.size > 1
 			returnString = returnString + "~nProperties{"
@@ -216,12 +222,8 @@ Type SceneFile
 '--------------------------------------------------------------------------
 ' * Load an xml file (Scene-File) -> uses a handwritten xml-parser
 '--------------------------------------------------------------------------	
-	Method Load( path:String )
-		LoadCss (path)
-		Return
-		
+	Method LoadXml( path:String )
 		'Deprecated
-		Rem
 		Local xmlString:String = LoadString( path )
 		If Not xmlString Then Throw "Could not find the xml file " + path + " you wanted to load!"
 		If Not TEditor.GetInstance().world.NewScene()
@@ -261,7 +263,6 @@ Type SceneFile
 			EndIf
 			lineNr =+ 1
 		Next
-		EndRem
 	End Method
 	
 	Method LoadCss:Byte (path:String)

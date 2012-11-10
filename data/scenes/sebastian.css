@@ -1,0 +1,66 @@
+General{Width:2500;Height:1000;Layers:5;Sprites:59;Polys:6;}
+sprite1{x:1662;y:444;scalex:4.30;scaley:4.30;image:Ebene 3.png;}
+sprite2{x:2372;y:894;scalex:0.56;scaley:1.75;rotation:75;image:Ebene 1 Kopie.png;}
+sprite3{x:1476;y:416;scalex:4.30;scaley:4.30;alpha:0.87;red:216;blue:181;image:Ebene 3.png;}
+sprite4{x:1312;y:377;scalex:2.69;scaley:5.32;alpha:0.80;image:Farbe.png;}
+sprite5{x:1413;y:593;rotation:9;alpha:0.75;image:Ebene 5 Kopie.png;}
+sprite6{x:765;y:387;scalex:1.73;scaley:2.68;rotation:7;alpha:0.62;image:Kontur Kopie 4 1.png;}
+sprite7{x:836;y:416;scalex:1.73;scaley:2.68;rotation:7;alpha:0.75;image:Kontur Kopie 4 1.png;}
+sprite8{x:2051;y:872;scalex:1.25;scaley:1.50;alpha:0.99;image:Ebene 1 Kopie.png;}
+sprite9{x:1970;y:879;scalex:1.25;scaley:1.50;alpha:0.93;image:Ebene 1 Kopie.png;}
+sprite10{x:2139;y:885;scalex:1.25;scaley:1.19;alpha:0.93;image:Ebene 1 Kopie.png;}
+sprite11{x:2210;y:879;scalex:1.46;scaley:1.50;alpha:0.93;image:Ebene 1 Kopie.png;}
+sprite12{x:2284;y:883;scalex:1.50;scaley:1.38;alpha:0.93;image:Ebene 1 Kopie.png;}
+sprite13{x:2364;y:877;scalex:1.50;scaley:1.38;alpha:0.93;image:Ebene 1 Kopie.png;}
+sprite14{x:2452;y:882;scalex:1.38;scaley:1.38;rotation:-1;alpha:0.93;image:Ebene 1 Kopie.png;}
+sprite15{x:2049;y:888;scalex:1.38;scaley:1.38;rotation:85;alpha:0.93;image:Ebene 1 Kopie.png;}
+sprite16{x:2266;y:870;scalex:0.62;scaley:1.07;rotation:84;image:Ebene 1 Kopie.png;}
+sprite17{x:2417;y:874;scalex:0.62;scaley:1.07;rotation:98;image:Ebene 1 Kopie.png;}
+sprite18{x:1260;y:322;scalex:5.84;scaley:5.84;green:250;blue:169;layer:2;image:Ebene 3.png;}
+sprite19{x:662;y:163;scalex:6.21;scaley:6.21;alpha:0.61;red:213;green:160;blue:80;layer:2;image:Ebene 3.png;}
+sprite20{x:-126;y:12;rotation:-2;alpha:0.93;layer:2;image:Ebene 5 Kopie.png;}
+sprite21{x:55;y:265;scalex:2.47;scaley:2.80;alpha:0.81;layer:2;image:Kontur Kopie 4 1.png;}
+sprite22{x:145;y:313;scalex:1.38;scaley:2.20;alpha:0.81;layer:2;image:Kontur Kopie 4 1.png;}
+sprite23{x:233;y:242;scalex:2.39;scaley:2.13;alpha:0.87;layer:2;image:Kontur Kopie 4 1.png;}
+sprite24{x:1134;y:559;scalex:1.73;scaley:2.68;rotation:3;alpha:0.81;layer:2;image:Kontur Kopie 4 1.png;}
+sprite25{x:1043;y:453;scalex:1.73;scaley:2.68;rotation:1;alpha:0.74;layer:2;image:Kontur Kopie 4 1.png;}
+sprite26{x:948;y:366;scalex:1.75;scaley:2.29;rotation:-3;alpha:0.74;layer:2;image:Kontur Kopie 4 1.png;}
+sprite27{x:330;y:274;scalex:2.39;scaley:2.13;rotation:-7;alpha:0.87;layer:2;image:Kontur Kopie 4 1.png;}
+sprite28{x:422;y:305;scalex:2.39;scaley:2.13;rotation:15;alpha:0.87;layer:2;image:Kontur Kopie 4 1.png;}
+sprite29{x:537;y:316;scalex:2.39;scaley:2.13;rotation:15;alpha:0.87;layer:2;image:Kontur Kopie 4 1.png;}
+sprite30{x:670;y:402;scalex:1.72;scaley:1.74;rotation:15;alpha:0.87;layer:2;image:Kontur Kopie 4 1.png;}
+sprite31{x:141;y:560;scalex:7.28;scaley:1.23;layer:3;image:Ebene.png;}
+sprite32{x:791;y:839;scalex:13.38;scaley:3.38;layer:3;image:Ebene.png;}
+sprite33{x:60;y:422;layer:3;image:Ebene 1 Kopie 5.png;}
+sprite34{x:1854;y:711;scalex:0.86;scaley:1.75;rotation:-9;layer:3;image:Ebene 1 Kopie 5.png;}
+sprite35{x:1419;y:639;scalex:1.95;scaley:1.12;rotation:2;layer:3;image:Ebene 1 Kopie 5.png;}
+sprite36{x:1869;y:883;scalex:0.92;scaley:1.50;layer:3;image:Ebene 1 Kopie 5.png;}
+sprite37{x:1720;y:649;scalex:2.38;scaley:1.08;layer:3;image:Ebene 1 Kopie 5.png;}
+sprite38{x:180;y:423;layer:3;image:Ebene 1 Kopie 5.png;}
+sprite39{x:348;y:424;scalex:1.69;scaley:1.13;layer:3;image:Ebene 1 Kopie 5.png;}
+sprite40{x:536;y:439;scalex:1.38;scaley:1.23;rotation:3;layer:3;image:Ebene 1 Kopie 5.png;}
+sprite41{x:729;y:467;scalex:1.57;scaley:1.34;rotation:11;layer:3;image:Ebene 1 Kopie 5.png;}
+sprite42{x:945;y:533;scalex:1.85;scaley:1.25;rotation:20;layer:3;image:Ebene 1 Kopie 5.png;}
+sprite43{x:1170;y:609;scalex:1.98;scaley:1.23;rotation:16;layer:3;image:Ebene 1 Kopie 5.png;}
+sprite44{x:169;y:521;scalex:1.47;scaley:0.86;layer:4;image:Kontur Kopie 4.png;}
+sprite45{x:30;y:523;scalex:0.75;scaley:0.80;layer:4;image:Kontur Kopie 4.png;}
+sprite46{x:902;y:622;scalex:2.71;scaley:0.91;rotation:22;layer:4;image:Kontur Kopie 4.png;}
+sprite47{x:730;y:564;scalex:1.47;scaley:0.86;layer:4;image:Kontur Kopie 4.png;}
+sprite48{x:442;y:543;scalex:1.63;scaley:0.79;layer:4;image:Kontur Kopie 4.png;}
+sprite49{x:579;y:567;scalex:0.75;scaley:0.81;rotation:60;layer:4;image:Kontur Kopie 4.png;}
+sprite50{x:302;y:532;scalex:0.62;scaley:0.68;layer:4;image:Kontur Kopie 4.png;}
+sprite51{x:2122;y:957;scalex:1.63;scaley:1.25;layer:4;image:Kontur Kopie 5.png;}
+sprite52{x:1978;y:974;layer:4;image:Kontur Kopie 5.png;}
+sprite53{x:2306;y:982;scalex:1.75;scaley:0.99;layer:4;image:Kontur Kopie 5.png;}
+sprite54{x:2463;y:985;scalex:0.81;scaley:0.73;alpha:0.93;layer:4;image:Kontur Kopie 5.png;}
+sprite55{x:1309;y:749;scalex:0.62;scaley:0.62;layer:4;image:Kontur Kopie 4.png;}
+sprite56{x:1393;y:742;scalex:0.91;scaley:0.91;layer:4;image:Kontur Kopie 4.png;}
+sprite57{x:1719;y:731;scalex:0.87;scaley:0.72;layer:4;image:Kontur Kopie 4.png;}
+sprite58{x:1537;y:740;scalex:1.75;scaley:0.97;layer:4;image:Kontur Kopie 4.png;}
+sprite59{x:1131;y:713;scalex:2.71;scaley:0.91;rotation:14;layer:4;image:Kontur Kopie 4.png;}
+poly1{data:573,470,-30,470,573,397,-30,397;}
+poly2{data:915,543,550,457,929,484,564,398;}
+poly3{data:1194,631,912,523,1209,592,927,484;}
+poly4{data:1292,637,1200,624,1297,605,1205,592;}
+poly5{data:1768,658,1294,637,1769,626,1295,605;}
+poly6{data:1870,653,1765,653,1870,626,1765,626;}
