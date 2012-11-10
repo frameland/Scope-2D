@@ -1,3 +1,6 @@
+Global GfxWorkingDir:String
+Global MapWorkingDir:String
+
 '------------------------------------------------------------------------------
 ' Editing Mode
 '------------------------------------------------------------------------------
@@ -14,6 +17,8 @@ Type EditorWorld Extends TWorld
 ' Initialize the World
 '------------------------------------------------------------------------------	
 	Method Init()
+		LoadConfig()
+		
 		editor = TEditor.GetInstance()
 		rect_selection = New RectSelection
 		gfxChooseWorld = New TGraphicChooseWorld
@@ -22,6 +27,7 @@ Type EditorWorld Extends TWorld
 		gfxChooseWorld.Init()
 		SetMaxLayers( 5 )
 		NameList = New TMap
+		
 		'Ensure there is no lag in the beginning
 		Local canvas:TGadget = editor.exp_canvas.canvas
 		Render()
@@ -29,7 +35,20 @@ Type EditorWorld Extends TWorld
 		Flip 0
 		Delay 10
 	EndMethod
-
+	
+	Method LoadConfig()
+		Local config:ConfigFile = New ConfigFile
+		config.Load ("source/ressource/config.css")
+		GfxWorkingDir = config.Get ("Config", "gfxdir")
+		MapWorkingDir = config.Get ("Config", "mapdir")
+		If (GfxWorkingDir = "") Or (MapWorkingDir = "")
+			AppTitle = "Configuration Error!"
+			Notify ("You first have to set the gfx and map directory.")
+			OpenUrl ("source/ressource/config.css")
+			End
+		EndIf
+	End Method
+	
 	
 '------------------------------------------------------------------------------
 ' Update Different Modes
@@ -805,12 +824,17 @@ Type TGraphicChooseWorld
 ' * Load all images from data folder
 '--------------------------------------------------------------------------
 	Method LoadGraphics()
-		Local files:String[] = LoadDir( "data/graphics/" )
+		Local files:String[] = LoadDir (GfxWorkingDir)
 		GraphicsArray = New TImage[files.Length]
 		GraphicsPath = New String[files.Length]
 		For Local i:Int = 0 Until files.Length
 			If files[i].EndsWith(".png") Or files[i].EndsWith(".jpg")
-				GraphicsPath[gfxLength] = "data/graphics/" + files[i]
+				Local fileNoExtension:String = files[i][..files[i].Length-3]
+				If FileType (GfxWorkingDir + fileNoExtension + "txt") = 1
+					'Load Atlas
+					Continue
+				EndIf
+				GraphicsPath[gfxLength] = GfxWorkingDir + files[i]
 				GraphicsArray[gfxLength] = TManagedImage.Load( GraphicsPath[gfxLength] )
 				MidHandleImage( GraphicsArray[gfxLength] )
 				gfxLength:+ 1

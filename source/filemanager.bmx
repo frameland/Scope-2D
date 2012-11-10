@@ -26,7 +26,7 @@ Type SceneFile
 '--------------------------------------------------------------------------
 	Method Open( path:String = "" )
 		If path = "" Then
-			path = RequestFile("Please Choose a SceneFile ...", ":css", False, "data/scenes/")
+			path = RequestFile("Please Choose a SceneFile ...", ":css", False, MapWorkingDir)
 		EndIf
 		If path Then
 			If Not Load( path )
@@ -50,7 +50,7 @@ Type SceneFile
 	Method Save()
 		Local name:String
 		If (currentlyOpened = "") Or (FileType(currentlyOpened) <> 1) Then
-			name = RequestFile( "Name your file ...", ":css", True, "data/scenes/")
+			name = RequestFile( "Name your file ...", ":css", True, MapWorkingDir)
 			If name = "" Then Return
 		Else
 			name = currentlyOpened
@@ -61,7 +61,7 @@ Type SceneFile
 
 	Method SaveAs()
 		Local name:String
-		name = RequestFile( "Name your file ...", ":css", True, "data/scenes/")
+		name = RequestFile( "Name your file ...", ":css", True, MapWorkingDir)
 		If name = "" Then Return
 		currentlyOpened = name
 		WriteCssFile( name )
@@ -98,8 +98,8 @@ Type SceneFile
 			If entity.color.g <> 255	Then stream.WriteString( "~t~t<green>" + entity.color.g + "</green>~n" )
 			If entity.color.b <> 255	Then stream.WriteString( "~t~t<blue>" + entity.color.b + "</blue>~n" )
 			If entity.texturePath
-				If entity.texturePath.StartsWith("data/graphics/") Then
-					text = entity.texturePath["data/graphics/".Length..]
+				If entity.texturePath.StartsWith(GfxWorkingDir) Then
+					text = entity.texturePath[GfxWorkingDir.Length..]
 				Else
 					text = entity.texturePath
 				EndIf
@@ -153,8 +153,8 @@ Type SceneFile
 			If entity.name		 		Then stream.WriteString( "name:"    + entity.name  + sc )
 			
 			If entity.texturePath
-				If entity.texturePath.StartsWith("data/graphics/") Then
-					text = entity.texturePath["data/graphics/".Length..]
+				If entity.texturePath.StartsWith(GfxWorkingDir) Then
+					text = entity.texturePath[GfxWorkingDir.Length..]
 				Else
 					text = entity.texturePath
 				EndIf
@@ -319,7 +319,7 @@ Type SceneFile
 				Case "y"
 					entity.position.y = data.GetInt ("y")
 				Case "image"
-					entity.SetImage ("data/graphics/" + data.Get ("image"))
+					entity.SetImage (GfxWorkingDir + data.Get ("image"))
 				Case "scalex"
 					entity.scale.sx = data.GetFloat ("scalex")
 				Case "scaley"
@@ -412,7 +412,7 @@ Type SceneFile
 				Case "blue"
 					templateSprite.color.b = Float( value )
 				Case "image"
-					templateSprite.texturePath = "data/graphics/" + value
+					templateSprite.texturePath = GfxWorkingDir + value
 				Case "visible"
 					templateSprite.visible = Int( value )
 				Case "active"
