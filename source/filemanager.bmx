@@ -41,6 +41,11 @@ Type SceneFile
 			prop = SceneProperty (SceneProperty.List.First())
 			If (GadgetText (prop.labelProperty) = "") prop.Remove()
 		EndIf
+		
+		'Hack to update View
+		TEditor.GetInstance().exp_canvas.OnWindowResize(TEditor.GetInstance())
+		TEditor.GetInstance().world.gfxChooseWorld.OnResize()
+		
 	End Method
 	
 	

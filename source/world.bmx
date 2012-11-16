@@ -34,6 +34,7 @@ Type EditorWorld Extends TWorld
 		DrawRect( 0, 0, canvas.width, canvas.height )
 		Flip 0
 		Delay 10
+		
 	EndMethod
 	
 	Method LoadConfig()
@@ -823,6 +824,8 @@ Type TGraphicChooseWorld
 		MidHandleImage( arrow )
 		LoadGraphics()
 		OnResize()
+		Render()
+		Flip 0
 	EndMethod
 
 '--------------------------------------------------------------------------
