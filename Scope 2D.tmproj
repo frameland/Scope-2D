@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>source/selection.bmx</string>
+	<string>README.txt</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -21,6 +21,20 @@
 	<integer>242</integer>
 	<key>metaData</key>
 	<dict>
+		<key>README.txt</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>50</integer>
+				<key>line</key>
+				<integer>12</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
+		</dict>
 		<key>source/selection.bmx</key>
 		<dict>
 			<key>caret</key>
@@ -39,6 +53,7 @@
 	<key>openDocuments</key>
 	<array>
 		<string>source/selection.bmx</string>
+		<string>README.txt</string>
 	</array>
 	<key>shellVariables</key>
 	<array>
