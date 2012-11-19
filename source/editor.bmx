@@ -2,9 +2,7 @@ Const WINDOW_MINX:Int = 680
 Const WINDOW_MINY:Int = 360
 Global CANVAS_WIDTH:Int = 960
 Global CANVAS_HEIGHT:Int = 640
-Const WINDOW_BORDER:Int = 0 'deprecated
-Const KEY_MINUS:Int = 221
-Const KEY_PLUS:Int = 191
+
 
 '------------------------------------------------------------------------------
 ' Type-Info: GUI Main Type, Used as a Singelton
@@ -14,15 +12,19 @@ Type TEditor
 	Global instance:TEditor
 	Field window:TGadget
 	Field mouse:TGuiMouse
-	Field pad:TController
 	Field is_ending:Byte = False
-	Field state:Int = 1 '1 = canvas mode, 2 = else, 3 = Graphic Choosing
+	
+	'1 = canvas mode, 2 = else, 3 = Graphic Choosing
+	Field state:Int = 1
+	
 	Field editMode:Byte = True
 	Field moveMode:Byte = False
+	
 	Field exp_menu:ExpMenu
 	Field exp_toolbar:ExpToolbar
 	Field exp_canvas:ExpCanvas
 	Field exp_options:ExpOptions
+	
 	Field world:EditorWorld
 	Field WorldState:TWorldState
 	
@@ -42,12 +44,13 @@ Type TEditor
 		Init()
 		CreateTimer( 60 )
 		instance = Self
-		Local flags:Int = WINDOW_TITLEBAR | WINDOW_CLIENTCOORDS ..
-		| WINDOW_MENU | WINDOW_CENTER | WINDOW_ACCEPTFILES | WINDOW_RESIZABLE | WINDOW_FULLSCREEN
+		Local flags:Int = WINDOW_TITLEBAR | WINDOW_CLIENTCOORDS | WINDOW_MENU | WINDOW_CENTER | WINDOW_ACCEPTFILES | WINDOW_RESIZABLE
+		?MacOS
+			flags = flags | WINDOW_FULLSCREEN
+		?
 		window = CreateWindow( "Scope 2D",0,0,CANVAS_WIDTH+200,CANVAS_HEIGHT,Null,flags )
 		HideGadget( window )
 		SetMinWindowSize( window, WINDOW_MINX, WINDOW_MINY )
-		pad = New TController
 		world = New EditorWorld
 		mouse = New TGuiMouse
 		exp_menu = New ExpMenu
@@ -426,9 +429,8 @@ Type TEditor
 '	Returns: /
 '------------------------------------------------------------------------------
 	Method Init()
-		GCSetMode( 1 )
+		AutoImageFlags (MIPMAPPEDIMAGE|FILTEREDIMAGE)
 		SetGraphicsDriver( GLMax2DDriver(), GRAPHICS_BACKBUFFER )
-		AutoImageFlags( MIPMAPPEDIMAGE|FILTEREDIMAGE  )
 		GLShareContexts()
 	EndMethod
 	

@@ -32,7 +32,6 @@ Type EditorWorld Extends TWorld
 		Local canvas:TGadget = editor.exp_canvas.canvas
 		Render()
 		DrawRect( 0, 0, canvas.width, canvas.height )
-		Flip 0
 		Delay 10
 		
 	EndMethod
@@ -569,8 +568,8 @@ Type EditorWorld Extends TWorld
 		SetHandle 0,0
 		SetColor 0, 0, 0
 		SetAlpha 1
-		DrawText "Fps: " + GetFps(), 4, height
-		height:+16
+		'DrawText "Fps: " + GetFps(), 4, height
+		'height:+16
 		DrawText "Sprites OnScreen: " + renderedSprites, 4, height
 		height:+ 16
 		DrawText ("Sprites: " + EntityList.Count(), 4, height)
@@ -825,7 +824,6 @@ Type TGraphicChooseWorld
 		LoadGraphics()
 		OnResize()
 		Render()
-		Flip 0
 	EndMethod
 
 '--------------------------------------------------------------------------

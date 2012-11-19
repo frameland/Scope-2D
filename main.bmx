@@ -1,3 +1,9 @@
+Rem
+	For building Scope2D you need:
+	* MaxGui (comes standard with latest BlitzMax)
+	* chaos.desktopext
+EndRem
+
 'buildopt: release
 'buildopt: gui
 'buildopt: execute
@@ -11,8 +17,8 @@ SuperStrict
 Import maxgui.drivers
 Import maxgui.proxygadgets
 Import chaos.desktopext
-Import sho.fps
 Include "source/engine/core.bmx"
+'Import sho.fps
 
 '--------------------------------------------------------------------------
 ' * Include Files
@@ -24,7 +30,6 @@ Include "source/editor_toolbar.bmx"
 Include "source/editor_canvas.bmx"
 Include "source/editor_options.bmx"
 Include "source/mouse.bmx"
-Include "source/controller.bmx"
 Include "source/selection.bmx"
 Include "source/filemanager.bmx"
 Include "source/undo.bmx"

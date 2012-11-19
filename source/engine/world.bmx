@@ -181,14 +181,11 @@ Type TWorld Abstract
 ' * Return True if entity is in view of the player, else False
 '--------------------------------------------------------------------------
 	Method IsInView:Int( entity:TEntity )
-		Return ((entity.position.x + entity.size.width) * cam.position.z + cam.screen_center_x >..
-		(cam.position.x) * cam.position.z + cam.dist_x )..
-		And ((entity.position.x) * cam.position.z + cam.screen_center_x <..
-		(cam.position.x + entity.size.width) * cam.position.z + cam.view.width + cam.dist_x)..
-		And ((entity.position.y + entity.size.height) * cam.position.z + cam.screen_center_y >..
-		(cam.position.y) * cam.position.z + cam.dist_y )..
-		And ((entity.position.y)*cam.position.z + cam.screen_center_y <..
-		(cam.position.y + entity.size.height) * cam.position.z + cam.view.height + cam.dist_y)
+		Local size:Float = Max (entity.image.width*entity.scale.sx, entity.image.height*entity.scale.sy)
+		Return  (entity.position.x + size - entity.image.handle_x + cam.screen_center_x/cam.position.z) > cam.position.x And ..
+				(entity.position.y + size - entity.image.handle_y + cam.screen_center_y/cam.position.z) > cam.position.y And ..
+				(entity.position.x + entity.image.handle_x - size - cam.screen_center_x/cam.position.z) < cam.position.x And ..
+				(entity.position.y + entity.image.handle_y - size - cam.screen_center_y/cam.position.z) < cam.position.y
 	End Method
 	
 	

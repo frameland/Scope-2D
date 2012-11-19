@@ -319,8 +319,15 @@ Type SceneProperty
 	
 	Global List:TList = New TList
 	Global lastY:Int = 4
-	Global propFont:TGuiFont = LookUpGuiFont (GUIFONT_SYSTEM, 12, FONT_BOLD)
-	Global valFont:TGuiFont = LookUpGuiFont (GUIFONT_SYSTEM, 11)
+	
+	?MacOS
+		Const FONT_SIZE:Int = 11
+	?Win32
+		Const FONT_SIZE:Int = 9
+	?
+	Global propFont:TGuiFont = LookUpGuiFont (GUIFONT_SYSTEM, FONT_SIZE, FONT_BOLD)
+	Global valFont:TGuiFont = LookUpGuiFont (GUIFONT_SYSTEM, FONT_SIZE)
+
 	Global icon:TPixmap = LoadPixmap ("source/ressource/remove.png")
 	Global size:Int = 0
 	Global scroller:TScrollPanel

@@ -71,8 +71,14 @@ Type ExpOptions Extends TEditorExpansion
 	End Method
 	
 	Method InitProps()
-		Local titleFont:TGuiFont = LoadGuiFont ("Helvetica", 11, True)
-		Local normalFont:TGuiFont = LoadGuiFont ("Helvetica", 12)
+		Local fontSize:Int
+		?MacOS
+			fontSize = 11
+		?Win32
+			fontSize = 9
+		?
+		Local titleFont:TGuiFont = LookupGuiFont (,fontSize,FONT_BOLD)
+		Local normalFont:TGuiFont = LookupGuiFont(,fontSize)
 		
 		Local labelName:TGadget = CreateLabel( "Name",12,12,40,18,panelProps, LABEL_RIGHT )
 		prop_Name:TGadget = CreateTextField( 61,9,121,20,panelProps,0 )

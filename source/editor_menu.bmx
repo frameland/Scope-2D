@@ -128,6 +128,7 @@ Type ExpMenu Extends TEditorExpansion
 			Case M_QUIT
 				editor.EndProgram()
 			?
+			
 			'edit
 			Case M_UNDO
 				editor.world.Undo()
@@ -161,6 +162,7 @@ Type ExpMenu Extends TEditorExpansion
 				EndIf
 				RedrawGadget( editor.window )
 				editor.exp_options.UpdatePropsUI()
+				
 			'view
 			Case M_RESETVIEW
 				editor.world.ResetView()
@@ -187,6 +189,7 @@ Type ExpMenu Extends TEditorExpansion
 				RedrawGadget( editor.window )
 			Case M_GRIDSIZE
 				editor.window_gridSize.Show()
+				
 			'help
 			Case M_ABOUT
 				editor.window_about.Show()

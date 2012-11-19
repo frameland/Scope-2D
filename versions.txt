@@ -1,3 +1,10 @@
+Alpha 4:
+	- New shortcuts, orientated from Autodek's Maya
+	- New standard save format: css
+	- Now supports creating 'collision rectangles'
+	- Cloning now offsets the dublicated item by 10px in both directions
+	- Overall Improvements
+
 Alpha 3:
 	- Position, Scaling & Rotation can now be set using the keyboard in the inspector
 	- Now supports Fullscreen (OSX only)

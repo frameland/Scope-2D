@@ -37,7 +37,7 @@ Type ExpCanvas Extends TEditorExpansion
 		SetOrigin( 0, 0 )
 		ResetDrawing()
 		world.Render()
-		Flip 1
+		Flip 0
 	End Method
 	
 End Type

@@ -46,13 +46,17 @@ Type TSelection
 		SetAlpha( 1 )
 		SetBlend( ALPHABLEND )
 		SetHandle( entity.image.width/2, entity.image.height/2 )
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
-		glEnable( GL_LINE_SMOOTH )
+		
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
+			glEnable( GL_LINE_SMOOTH )
+		
 		DrawRect( (entity.position.x * cam.position.z) - (cam.position.x * cam.position.z) + cam.screen_center_x,..
 		(entity.position.y * cam.position.z) - (cam.position.y * cam.position.z) + cam.screen_center_y,..
 		entity.image.width, entity.image.height )
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
-		glDisable (GL_LINE_SMOOTH)
+
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
+			glDisable (GL_LINE_SMOOTH)
+
 		SetHandle 4, 4
 		Local scale:Float = Max(cam.position.z,0.6)
 		SetScale scale, scale
