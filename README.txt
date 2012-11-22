@@ -6,7 +6,10 @@ http://scope2d.com/
 The docs from the above link are outdated for the shortcuts. They are now loosley based on Autodesk's Maya software.
 Now you move trough the scene/map by alt-dragging it around (you can also use cmd on a mac).
 Zooming is done via the mousewheel.
+Press Space to bring up the graphics selection window.
+
 Tools-Shortcuts: Q,W,E,R
+Shift: Toggle Tools-Option
 Select All: Cmd+A
 Deselect All: Cmd+D
 Clone: Cmd+C

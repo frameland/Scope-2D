@@ -30,7 +30,7 @@ Type TCamera
 		screen_center_x = CANVAS_WIDTH/2
 		screen_center_y = CANVAS_HEIGHT/2
 		view.Set( CANVAS_WIDTH, CANVAS_HEIGHT )
-		border = 5
+		border = 200
 	EndMethod
 	
 '--------------------------------------------------------------------------

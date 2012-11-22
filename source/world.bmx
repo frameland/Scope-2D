@@ -481,7 +481,7 @@ Type EditorWorld Extends TWorld
 		End Select
 		RenderWorldBorder()
 		
-		'DebugRender( renderedSprites )
+		DebugRender( renderedSprites )
 	EndMethod
 	
 	Method RenderEditMode:Int()
@@ -577,22 +577,15 @@ Type EditorWorld Extends TWorld
 	
 	Method RenderWorldBorder()
 		If Not editor.exp_menu.xySwitch Then Return
-		
-		'Lines
-		Local pos:Float
 		ResetDrawing()
 		SetAlpha 1.0
-		SetColor 190,190,190
-		Local lengthX:Float = (size.x-cam.position.x)*cam.position.z+cam.screen_center_x + cam.border
-		Local lengthY:Float = (size.y-cam.position.y)*cam.position.z+cam.screen_center_y + cam.border
-		pos = (-cam.position.y * cam.position.z + cam.screen_center_y)
-		DrawRect (0, pos, lengthX, 1)
-		pos = (-cam.position.x * cam.position.z + cam.screen_center_x)
-		DrawRect (pos, 0, 1, lengthY)
-		pos = ((size.y - cam.position.y) * cam.position.z + cam.screen_center_y)
-		DrawRect (0, pos, lengthX, 1)
-		pos = ((size.x - cam.position.x) * cam.position.z + cam.screen_center_x)
-		DrawRect (pos, 0, 1, lengthY)
+		SetColor 90,90,90
+		Local x:Int = cam.screen_center_x - (cam.position.x * cam.position.z)
+		Local y:Int = cam.screen_center_y - (cam.position.y * cam.position.z)
+		Local w:Int = size.x * cam.position.z
+		Local h:Int = size.y * cam.position.z
+		DrawRect2 (x, y, w, h)
+		DrawRect2 (x-3, y-3, w+6, h+6, 2)
 	End Method
 	
 	Method RenderGrid()
