@@ -23,9 +23,9 @@ Type EditorWorld Extends TWorld
 		rect_selection = New RectSelection
 		gfxChooseWorld = New TGraphicChooseWorld
 		size = New TPosition
-		size.Set (2500,1000)
+		size.Set (1000,1000)
 		gfxChooseWorld.Init()
-		SetMaxLayers( 5 )
+		SetMaxLayers( 10 )
 		NameList = New TMap
 		
 		'Ensure there is no lag in the beginning
@@ -402,6 +402,27 @@ Type EditorWorld Extends TWorld
 		editor.exp_options.UpdatePropsUI()
 	End Method
 	
+	Method ChangeEntityLayer (increment:Byte = False)
+		If editor.state <> 1 Then Return
+		SaveState()
+		Local entity:TEntity
+		If increment
+			For entity = EachIn EntityList
+				If entity.selection.isSelected
+					entity.layer :+ 1
+					entity.layer = Min (entity.layer, MAX_LAYERS)
+				EndIf
+			Next
+		Else
+			For entity = EachIn EntityList
+				If entity.selection.isSelected
+					entity.layer :- 1
+					entity.layer = Max (entity.layer, 1)
+				EndIf
+			Next
+		EndIf
+		editor.exp_options.UpdatePropsUI()
+	End Method
 	
 '--------------------------------------------------------------------------
 ' * Helper Function for Moving Entities 1 Pixel with ArrowKeys
@@ -481,7 +502,7 @@ Type EditorWorld Extends TWorld
 		End Select
 		RenderWorldBorder()
 		
-		DebugRender( renderedSprites )
+		'DebugRender( renderedSprites )
 	EndMethod
 	
 	Method RenderEditMode:Int()

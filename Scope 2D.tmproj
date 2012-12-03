@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>source/world.bmx</string>
+	<string>source/selection.bmx</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -49,25 +49,10 @@
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>source/world.bmx</key>
-		<dict>
-			<key>caret</key>
-			<dict>
-				<key>column</key>
-				<integer>16</integer>
-				<key>line</key>
-				<integer>462</integer>
-			</dict>
-			<key>firstVisibleColumn</key>
-			<integer>0</integer>
-			<key>firstVisibleLine</key>
-			<integer>437</integer>
-		</dict>
 	</dict>
 	<key>openDocuments</key>
 	<array>
 		<string>source/selection.bmx</string>
-		<string>source/world.bmx</string>
 		<string>source/engine/camera.bmx</string>
 	</array>
 	<key>shellVariables</key>

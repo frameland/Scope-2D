@@ -245,6 +245,12 @@ Type TEditor
 						exp_toolbar.OnClick (9)
 					Case KEY_R
 						exp_toolbar.OnClick (10)
+					
+					Case KEY_D
+						world.ChangeEntityLayer (False)
+					Case KEY_F
+						world.ChangeEntityLayer (True)
+					
 					Case KEY_LSHIFT
 						If state <> 1 Then Return
 						exp_options.ToggleExtra( Self )

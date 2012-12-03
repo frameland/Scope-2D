@@ -1,0 +1,84 @@
+General{Width:1000;Height:1000;Layers:10;Sprites:81;Polys:2;}
+sprite1{x:90;y:604;image:Stones 5.png;}
+sprite2{x:196;y:871;image:Stones 3.png;}
+sprite3{x:150;y:850;rotation:36;image:Stones 2.png;}
+sprite4{x:76;y:761;image:Stones.png;}
+sprite5{x:679;y:781;rotation:15;image:Stones.png;}
+sprite6{x:460;y:600;scalex:0.68;scaley:0.97;blue:254;image:Stones 5.png;}
+sprite7{x:615;y:648;image:Stones 2.png;}
+sprite8{x:318;y:606;image:Stones 5.png;}
+sprite9{x:176;y:680;image:Stones 2.png;}
+sprite10{x:111;y:696;image:Stones 3.png;}
+sprite11{x:64;y:721;image:Stones.png;}
+sprite12{x:583;y:784;rotation:36;image:Stones 3.png;}
+sprite13{x:398;y:603;scalex:0.68;scaley:0.97;image:Stones 5.png;}
+sprite14{x:569;y:617;scalex:1.38;scaley:1.08;image:Stones 5.png;}
+sprite15{x:690;y:722;image:Stones 2.png;}
+sprite16{x:843;y:805;image:Stones 2.png;}
+sprite17{x:778;y:820;rotation:36;image:Stones 3.png;}
+sprite18{x:678;y:682;image:Stones 2.png;}
+sprite19{x:711;y:890;rotation:36;image:Stones 3.png;}
+sprite20{x:916;y:748;rotation:15;image:Stones.png;}
+sprite21{x:887;y:846;rotation:15;image:Stones.png;}
+sprite22{x:805;y:686;image:Stones 3.png;}
+sprite23{x:516;y:854;rotation:36;image:Stones 3.png;}
+sprite24{x:864;y:671;scalex:0.93;scaley:0.93;rotation:48;image:Stones.png;}
+sprite25{x:193;y:604;image:Stones 5.png;}
+sprite26{x:700;y:627;image:Stones 5.png;}
+sprite27{x:931;y:641;image:Stones 5.png;}
+sprite28{x:816;y:627;image:Stones 5.png;}
+sprite29{x:1186;y:664;scalex:1.25;image:Stones 5.png;}
+sprite30{x:623;y:700;image:Stones 2.png;}
+sprite31{x:475;y:703;image:Stones 3.png;}
+sprite32{x:378;y:759;image:Stones 3.png;}
+sprite33{x:232;y:693;image:Stones 2.png;}
+sprite34{x:690;y:617;image:Stones 5.png;}
+sprite35{x:123;y:736;scalex:1.13;scaley:1.13;image:Stones 3.png;}
+sprite36{x:635;y:740;image:Stones 2.png;}
+sprite37{x:896;y:930;scalex:1.64;scaley:1.64;image:Stones 2.png;}
+sprite38{x:1293;y:777;scalex:1.64;scaley:1.64;image:Stones 2.png;}
+sprite39{x:979;y:919;scalex:1.64;scaley:1.64;image:Stones 2.png;}
+sprite40{x:1089;y:882;scalex:1.64;scaley:1.64;rotation:24;image:Stones 2.png;}
+sprite41{x:1182;y:851;scalex:1.64;scaley:1.64;rotation:24;image:Stones 2.png;}
+sprite42{x:487;y:743;image:Stones 3.png;}
+sprite43{x:390;y:799;image:Stones 3.png;}
+sprite44{x:750;y:737;image:Stones 2.png;}
+sprite45{x:326;y:849;image:Stones 3.png;}
+sprite46{x:344;y:778;rotation:36;image:Stones 2.png;}
+sprite47{x:184;y:767;rotation:36;image:Stones 3.png;}
+sprite48{x:338;y:889;image:Stones 3.png;}
+sprite49{x:292;y:868;rotation:36;image:Stones 2.png;}
+sprite50{x:247;y:609;image:Stones 5.png;}
+sprite51{x:184;y:831;image:Stones 3.png;}
+sprite52{x:991;y:831;scalex:1.64;scaley:1.64;image:Stones 2.png;}
+sprite53{x:1180;y:749;scalex:1.64;scaley:1.64;image:Stones 2.png;}
+sprite54{x:788;y:830;rotation:36;image:Stones 3.png;}
+sprite55{x:721;y:712;rotation:15;layer:2;image:Stones.png;}
+sprite56{x:818;y:736;layer:2;image:Stones 2.png;}
+sprite57{x:1005;y:731;layer:2;image:Stones 2.png;}
+sprite58{x:555;y:701;layer:2;image:Stones 2.png;}
+sprite59{x:390;y:671;layer:2;image:Stones.png;}
+sprite60{x:283;y:684;rotation:-158;layer:2;image:Stones.png;}
+sprite61{x:319;y:716;scalex:0.91;scaley:0.91;rotation:-9;layer:2;image:Stones.png;}
+sprite62{x:452;y:740;scalex:0.81;scaley:0.81;rotation:122;green:251;blue:223;layer:2;image:Stones 3.png;}
+sprite63{x:295;y:724;rotation:-158;layer:2;image:Stones.png;}
+sprite64{x:331;y:756;scalex:0.91;scaley:0.91;rotation:-9;layer:2;image:Stones.png;}
+sprite65{x:464;y:780;scalex:0.81;scaley:0.81;rotation:122;green:251;blue:223;layer:2;image:Stones 3.png;}
+sprite66{x:677;y:781;rotation:36;layer:2;image:Stones 2.png;}
+sprite67{x:421;y:779;rotation:-122;layer:2;image:Stones.png;}
+sprite68{x:457;y:811;scalex:0.91;scaley:0.91;rotation:26;layer:2;image:Stones.png;}
+sprite69{x:590;y:835;scalex:0.81;scaley:0.81;rotation:159;green:251;blue:223;layer:2;image:Stones 3.png;}
+sprite70{x:279;y:846;scalex:0.91;scaley:0.91;rotation:-9;layer:2;image:Stones.png;}
+sprite71{x:369;y:869;rotation:-122;layer:2;image:Stones.png;}
+sprite72{x:137;y:828;scalex:0.91;scaley:0.91;rotation:-9;layer:2;image:Stones.png;}
+sprite73{x:227;y:851;rotation:-122;layer:2;image:Stones.png;}
+sprite74{x:647;y:798;scalex:0.81;scaley:0.81;rotation:174;green:251;blue:223;layer:2;image:Stones 3.png;}
+sprite75{x:762;y:777;layer:2;image:Stones 2.png;}
+sprite76{x:885;y:846;rotation:36;layer:2;image:Stones 2.png;}
+sprite77{x:785;y:871;scalex:0.85;scaley:0.85;rotation:159;green:251;blue:223;layer:2;image:Stones 3.png;}
+sprite78{x:842;y:834;scalex:0.85;scaley:0.85;rotation:174;green:251;blue:223;layer:2;image:Stones 3.png;}
+sprite79{x:1040;y:651;layer:2;image:Stones 5.png;}
+sprite80{x:1097;y:759;scalex:1.64;scaley:1.64;layer:3;image:Stones 2.png;}
+sprite81{x:567;y:741;layer:4;image:Stones 2.png;}
+poly1{data:27,591,763,591,27,626,763,626;}
+poly2{data:708,589,1285,658,694,705,1271,774;}
