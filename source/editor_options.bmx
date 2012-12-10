@@ -1,5 +1,7 @@
 Type ExpOptions Extends TEditorExpansion
 	
+	Field editor:TEditor
+	
 	Field panel:TGadget
 	Field panelProps:TGadget
 	
@@ -53,6 +55,8 @@ Type ExpOptions Extends TEditorExpansion
 		ShowGadget( tabs[0] )
 		InitTabs()
 		InitProps()
+		
+		Self.editor = editor
 	EndMethod
 
 '--------------------------------------------------------------------------
@@ -191,24 +195,39 @@ Type ExpOptions Extends TEditorExpansion
 		EndIf
 		EnableGadget panelProps
 		If (selected = 1)
-			EnableGadget prop_Name
-			EnableGadget prop_Alpha
-			EnableGadget prop_Red
-			EnableGadget prop_Green
-			EnableGadget prop_Blue
-			entity = editor.world.GetSelectedEntity()
-			SetGadgetText( prop_Name, entity.name )
-			SetSliderValue( prop_Layer, entity.layer )
-			SetGadgetText (prop_LayerNumber, entity.layer)
-			SetSliderValue( prop_Red, entity.color.r )
-			SetSliderValue( prop_Green, entity.color.g )
-			SetSliderValue( prop_Blue, entity.color.b )
-			SetSliderValue( prop_Alpha, Float( entity.color.a * 100.0 ) )
+			If editor.exp_toolbar.mode = MODE_EDIT
+				EnableGadget prop_Name
+				EnableGadget prop_Alpha
+				EnableGadget prop_Red
+				EnableGadget prop_Green
+				EnableGadget prop_Blue
+				EnableGadget prop_Layer
+				entity = editor.world.GetSelectedEntity()
+				SetGadgetText( prop_Name, entity.name )
+				SetSliderValue( prop_Layer, entity.layer )
+				SetGadgetText (prop_LayerNumber, entity.layer)
+				SetSliderValue( prop_Red, entity.color.r )
+				SetSliderValue( prop_Green, entity.color.g )
+				SetSliderValue( prop_Blue, entity.color.b )
+				SetSliderValue( prop_Alpha, Float( entity.color.a * 100.0 ) )
+			Else
+				DisableGadget prop_Alpha
+				DisableGadget prop_Red
+				DisableGadget prop_Green
+				DisableGadget prop_Blue
+				DisableGadget prop_Layer
+				entity = editor.world.GetSelectedEntity()
+				SetGadgetText( prop_Name, entity.name )
+			EndIf
 		ElseIf (selected > 1)
-			SetGadgetText( prop_Name, "..." )
-			DisableGadget prop_Name
-			SetSliderValue( prop_Layer, 1 )
-			SetSliderValue( prop_Alpha, 100 )
+			If editor.exp_toolbar.mode = MODE_EDIT
+				SetGadgetText( prop_Name, "..." )
+				DisableGadget prop_Name
+				SetSliderValue( prop_Layer, 1 )
+				SetSliderValue( prop_Alpha, 100 )
+			Else
+				DisableGadget panelProps
+			EndIf
 		EndIf
 		UpdateTransforms()
 	End Method
@@ -421,13 +440,13 @@ Type ExpOptions Extends TEditorExpansion
 			entity = editor.world.GetSelectedEntity()
 			Select editor.exp_toolbar.selected
 				Case 1
-					SetGadgetText (prop_X, Int (entity.position.x))
-					SetGadgetText (prop_Y, Int (entity.position.y))
+					SetGadgetText (prop_X, Int (entity.position.x + 0.5))
+					SetGadgetText (prop_Y, Int (entity.position.y + 0.5))
 				Case 2
 					SetGadgetText (prop_ScaleX, FormatedFloat (entity.scale.sx))
 					SetGadgetText (prop_ScaleY, FormatedFloat (entity.scale.sy))
 				Case 3
-					SetGadgetText (prop_Rotation, Int (entity.rotation))
+					SetGadgetText (prop_Rotation, Int (entity.rotation + 0.5))
 				Default
 			End Select
 		ElseIf selected > 1
@@ -442,11 +461,11 @@ Type ExpOptions Extends TEditorExpansion
 	
 	'May only be called after creating entity
 	Method ShowTransformAttributes (entity:TEntity)
-		SetGadgetText (prop_X, Int (entity.position.x))
-		SetGadgetText (prop_Y, Int (entity.position.y))
+		SetGadgetText (prop_X, Int (entity.position.x + 0.5))
+		SetGadgetText (prop_Y, Int (entity.position.y + 0.5))
 		SetGadgetText (prop_ScaleX, FormatedFloat (entity.scale.sx))
 		SetGadgetText (prop_ScaleY, FormatedFloat (entity.scale.sy))
-		SetGadgetText (prop_Rotation, Int (entity.rotation))
+		SetGadgetText (prop_Rotation, Int (entity.rotation + 0.5))
 	End Method
 	
 End Type

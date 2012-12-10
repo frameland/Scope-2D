@@ -60,6 +60,7 @@ Type ExpToolbar Extends TEditorExpansion
 			Case 12,13,14
 				mode = data - 12
 				SelectMode()
+				editor.exp_options.UpdatePropsUI()
 			Default
 		End Select
 	End Method

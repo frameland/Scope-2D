@@ -153,7 +153,8 @@ Type SceneFile
 				If entity.scale.sx <> 1.0 	Then stream.WriteString( "scalex:" + String(entity.scale.sx)[..p+3] + sc)
 				p = String(entity.scale.sy).Find(".")
 				If entity.scale.sy <> 1.0 	Then stream.WriteString( "scaley:" + String(entity.scale.sy)[..p+3] + sc)
-				If entity.rotation <> 0.0 	Then stream.WriteString( "rotation:" + Int(entity.rotation) + sc)
+				p = String(entity.rotation).Find(".")
+				If entity.rotation <> 0.0 	Then stream.WriteString( "rotation:" + String(entity.rotation)[..p+3] + sc)
 				p = String(entity.color.a).Find(".")
 				If entity.color.a <> 1.0 	Then stream.WriteString( "alpha:" + String(entity.color.a)[..p+3] + sc)
 				If entity.color.r <> 255	Then stream.WriteString( "red:" + entity.color.r + sc)
@@ -162,7 +163,7 @@ Type SceneFile
 
 				If entity.visible <> 1		Then stream.WriteString( "visible:" + entity.visible + sc )
 				If entity.active <> 0 		Then stream.WriteString( "active:"  + entity.active  + sc )
-				If entity.layer <> 1 		Then stream.WriteString( "layer:"   + entity.layer + sc )
+				If entity.layer > 1 		Then stream.WriteString( "layer:"   + entity.layer + sc )
 				If entity.frame <> 0 		Then stream.WriteString( "frame:"   + entity.frame + sc )
 				If entity.name		 		Then stream.WriteString( "name:"    + entity.name  + sc )
 
@@ -178,7 +179,6 @@ Type SceneFile
 				stream.WriteString ("}~n")
 			Next
 		Next
-		
 		
 		i = 0
 		For entity = EachIn world.Polys
@@ -200,15 +200,21 @@ Type SceneFile
 		Local prop:String
 		Local val:String
 		Local i:SceneProperty
+		rem
 		Local j:NormalSceneProperty
 		For j = EachIn NormalSceneProperty.List
 			prop = GadgetText (j.labelProperty)
 			val = GadgetText (j.labelValue)
 			returnString = returnString + prop + ":" + val + ";"
 		Next
+		endrem
+		returnString:+ "Width:" + Int (TEditor.GetInstance().world.size.x) + ";"
+		returnString:+ "Height:" + Int (TEditor.GetInstance().world.size.y) + ";"
+		returnString:+ "Layers:" + TEditor.GetInstance().world.MAX_LAYERS + ";"
 		returnString:+ "Sprites:" + TEditor.GetInstance().world.EntityList.Count() + ";"
 		returnString:+ "Polys:" + TEditor.GetInstance().world.Polys.Count() + ";"
 		returnString:+"}"
+		
 		If SceneProperty.size > 1
 			returnString = returnString + "~nProperties{"
 			For i = EachIn SceneProperty.List
@@ -317,7 +323,7 @@ Type SceneFile
 		Local sX:Float = DistanceOfPoints (verts[0], verts[1], verts[2], verts[3]) / poly.image.width
 		Local sY:Float = DistanceOfPoints (verts[0], verts[1], verts[4], verts[5]) / poly.image.height
 		poly.SetScale (sx, sy)
-		poly.rotation = AngleOfPoints (verts[0], verts[1], verts[2], verts[3])
+		poly.rotation = AngleOfPoints (verts[0], verts[1], verts[2], verts[3]) - 180
 		Local x:Float = (verts[0] + verts[2] + verts[4] + verts[6]) / 4.0 + 0.5
 		Local y:Float = (verts[1] + verts[3] + verts[5] + verts[7]) / 4.0 + 0.5
 		poly.SetPosition (x, y)
@@ -339,7 +345,7 @@ Type SceneFile
 				Case "scaley"
 					entity.scale.sy = data.GetFloat ("scaley")				
 				Case "rotation"
-					entity.rotation = data.GetInt ("rotation")
+					entity.rotation = data.GetFloat ("rotation")
 				Case "alpha"
 					entity.color.a = data.GetFloat ("alpha")
 				Case "red"

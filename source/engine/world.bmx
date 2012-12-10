@@ -207,7 +207,7 @@ Type TWorld Abstract
 				StartUpdate()
 				cam.Update()
 				Update()
-				Delay FinishUpdate()-1 'give the system some time if available
+				'Delay FinishUpdate()-1 'give the system some time if available
 			EndIf
 			If TimeToRender()
 				StartRendering()

@@ -87,7 +87,6 @@ Type TEntity
 		.SetBlend( color.blend )
 		DrawImage( image, (position.x * cam.position.z) - (cam.position.x * cam.position.z) + cam.screen_center_x,..
 		(position.y * cam.position.z) - (cam.position.y * cam.position.z) + cam.screen_center_y, frame )
-		'Parallax: + (cam.position.x * layer/100.0)
 	EndMethod
 
 

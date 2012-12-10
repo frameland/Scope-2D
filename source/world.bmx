@@ -12,6 +12,7 @@ Type EditorWorld Extends TWorld
 	Field rect_selection:RectSelection
 	Field size:TPosition 'Size of the World in Pixels
 	Field Polys:TList = New TList
+	Field Events:TList = New TList
 	
 '------------------------------------------------------------------------------
 ' Initialize the World
@@ -154,7 +155,27 @@ Type EditorWorld Extends TWorld
 	End Method
 	
 	Method UpdateEventMode()
-		
+		Select editor.exp_toolbar.selected
+			Case 0
+				UpdateSelection()
+			Case 1
+				If (NrOfSelectedEntities() = 0)
+					UpdateSelection()
+					If (NrOfSelectedEntities() = 1)
+						editor.mouse.removeSelectionOnUp = True
+					EndIf
+				EndIf
+				UpdateMove()
+			Case 2
+				If (NrOfSelectedEntities() = 0)
+					UpdateSelection()
+					If (NrOfSelectedEntities() = 1)
+						editor.mouse.removeSelectionOnUp = True
+					EndIf
+				EndIf
+				UpdateScaling()
+			Default
+		EndSelect
 	End Method
 	
 	
@@ -291,12 +312,20 @@ Type EditorWorld Extends TWorld
 		For entity = EachIn List
 			If entity.selection.isSelected
 				angle = entity.memory_rotation + editor.mouse.XDisplacement()
-				angle = angle Mod 360
+				
+				'Clamp angle
+				If (angle > 180)
+					angle :- 360
+				EndIf
+				If (angle < -180)
+		            angle :+ 360;
+				EndIf
+				
 				If ButtonState(editor.exp_options.rotate_Snap)
-					value = 22.5 'change!!! to let it be moddable
+					value = 22.5
 					angle:- (angle Mod value)
 				EndIf
-				entity.SetRotation( TrimFloat(angle) )
+				entity.SetRotation(angle)
 			EndIf
 		Next
 	End Method
@@ -313,7 +342,11 @@ Type EditorWorld Extends TWorld
 		Local keepAspect:Byte = ButtonState( editor.exp_options.scale_KeepAspect )
 		For entity = EachIn List
 			If entity.selection.isSelected
-				If keepAspect 'Scaling both, x + y axis
+				If editor.exp_toolbar.mode = MODE_COLLISION 'Scaling x only
+					scaleFactorX = entity.memory_scale.sx + editor.mouse.XDisplacement() / 50
+					If scaleFactorX < 0.05 Then scaleFactorX = 0.05
+					scaleFactorY = 1.0
+				ElseIf keepAspect Or editor.exp_toolbar.mode = MODE_EVENT 'Scaling both, x + y axis
 					aspectRatio = entity.memory_scale.sx / entity.memory_scale.sy
 					scaleFactorX = entity.memory_scale.sx + editor.mouse.XDisplacement() / 50
 					scaleFactorY = scaleFactorX / aspectRatio
@@ -391,6 +424,8 @@ Type EditorWorld Extends TWorld
 					AddEntity( dummy )
 				ElseIf editor.exp_toolbar.mode = MODE_COLLISION
 					AddPoly (dummy)
+				ElseIf editor.exp_toolbar.mode = MODE_EVENT
+					AddEvent (dummy)
 				EndIf
 				CloneList.AddLast( dummy )
 			EndIf
@@ -403,7 +438,7 @@ Type EditorWorld Extends TWorld
 	End Method
 	
 	Method ChangeEntityLayer (increment:Byte = False)
-		If editor.state <> 1 Then Return
+		If (editor.state <> 1) Or (editor.exp_toolbar.mode <> MODE_EDIT) Then Return
 		SaveState()
 		Local entity:TEntity
 		If increment
@@ -423,6 +458,7 @@ Type EditorWorld Extends TWorld
 		EndIf
 		editor.exp_options.UpdatePropsUI()
 	End Method
+	
 	
 '--------------------------------------------------------------------------
 ' * Helper Function for Moving Entities 1 Pixel with ArrowKeys
@@ -579,7 +615,27 @@ Type EditorWorld Extends TWorld
 				EndIf
 			Next
 		Next
-		'Render Events
+		
+		Local highlighted:TEntity
+		For i = EachIn Events
+			If IsInView (i)
+				i.Render (cam)
+				If i.selection.isSelected
+					i.selection.Render( cam )
+				ElseIf i.selection.isOverlapping
+					highlighted = i
+				EndIf
+			EndIf
+		Next
+		
+		If highlighted
+			SetScale( highlighted.scale.sx * cam.position.z, highlighted.scale.sy * cam.position.z )
+			highlighted.selection.Render( cam )
+		EndIf
+		
+		If editor.mouse.Dragging And editor.exp_toolbar.selected = 0
+			rect_selection.Render( cam )
+		EndIf
 	End Method
 	
 	
@@ -707,25 +763,34 @@ Type EditorWorld Extends TWorld
 			Return EntityList
 		ElseIf editor.exp_toolbar.mode = MODE_COLLISION
 			Return Polys
+		ElseIf editor.exp_toolbar.mode = MODE_EVENT
+			Return Events
 		EndIf
 		Return Null
 	End Method
 	
+	
+'--------------------------------------------------------------------------
+' * Right Click Create
+'--------------------------------------------------------------------------
 	Method OnRightClick()
 		Select editor.exp_toolbar.mode
 			Case MODE_EDIT
-				
+				gfxChooseWorld.RecreateLastEntity (editor.mouse.WorldCoordX(), editor.mouse.WorldCoordY())
+				editor.exp_options.UpdatePropsUI()
 			Case MODE_COLLISION
 				CreatePoly()
+				editor.exp_options.UpdatePropsUI()
 			Case MODE_EVENT
-				
+				CreateEvent()
+				editor.exp_options.UpdatePropsUI()
 			Default
 		End Select
 	End Method
 
 	Method CreatePoly:TEntity (selectMe:Byte = True)
 		Local poly:TEntity = New TEntity
-		poly.SetImage ("source/ressource/rect.png")
+		poly.SetImage ("source/ressource/rect.png", 0)
 		poly.color.a = 0.7
 		poly.SetColor (200, 100, 100)
 		poly.SetPosition (editor.mouse.WorldCoordX(), editor.mouse.WorldCoordY())
@@ -739,6 +804,19 @@ Type EditorWorld Extends TWorld
 		Return poly
 	End Method
 
+	Method CreateEvent()
+		Local event:TEntity = New TEntity
+		event.SetImage ("source/ressource/event.png", 0)
+		event.color.a = 0.7
+		event.SetColor (232, 214, 108)
+		event.SetPosition (editor.mouse.WorldCoordX(), editor.mouse.WorldCoordY())
+		TSelection.ClearSelected (Events)
+		editor.exp_options.OnTabChange()
+		editor.exp_options.ShowTransformAttributes (event)
+		event.selection.isSelected = True
+		AddEvent (event)
+	End Method
+	
 	
 '--------------------------------------------------------------------------
 ' * Undo/Redo
@@ -779,6 +857,10 @@ Type EditorWorld Extends TWorld
 	
 	Method AddPoly (poly:TEntity)
 		poly.link = Polys.AddLast (poly)
+	End Method
+	
+	Method AddEvent (event:TEntity)
+		event.link = Events.AddLast (event)
 	End Method
 	
 	
@@ -827,6 +909,7 @@ Type TGraphicChooseWorld
 	
 	Field savedMouseX:Int
 	Field savedMouseY:Int
+	Field lastCreated:Int 'Gfx index of the last created entity
 	
 '------------------------------------------------------------------------------
 ' Init: Load bg-Image + world graphics
@@ -1017,7 +1100,8 @@ Type TGraphicChooseWorld
 		Local posX:Float = savedMouseX'editor.world.cam.position.X
 		Local posY:Float = savedMouseY'editor.world.cam.position.Y
 		entity.SetPosition( posX, posY )
-		entity.SetImage ( GraphicsPath[SelectedGraphic()] )
+		lastCreated = SelectedGraphic()
+		entity.SetImage ( GraphicsPath[lastCreated] )
 		TSelection.ClearSelected( editor.world.EntityList )
 		entity.selection.isSelected = True
 		editor.world.AddEntity( entity )
@@ -1026,7 +1110,19 @@ Type TGraphicChooseWorld
 		SetPointer( POINTER_SIZEALL )
 		editor.exp_options.ShowTransformAttributes (entity)
 	End Method
-
+	
+	Method RecreateLastEntity (posX:Int, posY:Float)
+		Local entity:TEntity = New TEntity
+		entity.SetPosition( posX, posY )
+		entity.SetImage ( GraphicsPath[lastCreated] )
+		TSelection.ClearSelected( editor.world.EntityList )
+		entity.selection.isSelected = True
+		editor.world.AddEntity( entity )
+		editor.exp_options.OnTabChange()
+		SetPointer( POINTER_SIZEALL )
+		editor.exp_options.ShowTransformAttributes (entity)
+	End Method
+	
 '--------------------------------------------------------------------------
 ' * Go to next/previous page
 '--------------------------------------------------------------------------

@@ -233,6 +233,7 @@ Type ScenePropertyWindow
 		editor.exp_menu.Disable()
 		DisableGadget( editor.window )
 		ShowGadget( window )
+		NormalSceneProperty.Clear()
 		editor.activeWindow = 5
 	End Method
 
@@ -273,6 +274,7 @@ Type ScenePropertyWindow
 					If (SelectedGadgetItem(comboView) = 0) 'Normal Props
 						HideGadget (tabs[1])
 						ShowGadget (tabs[0])
+						
 					ElseIf (SelectedGadgetItem(comboView) = 1) 'Custom Props
 						HideGadget (tabs[0])
 						ShowGadget (tabs[1])

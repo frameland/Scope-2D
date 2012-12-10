@@ -245,6 +245,16 @@ Type TEditor
 						exp_toolbar.OnClick (9)
 					Case KEY_R
 						exp_toolbar.OnClick (10)
+
+					Case KEY_1
+						exp_toolbar.OnClick (12)
+					Case KEY_2
+						exp_toolbar.OnClick (13)
+					Case KEY_3
+						exp_toolbar.OnClick (14)
+						
+					Case KEY_Y, KEY_Z
+						world.Undo()
 					
 					Case KEY_D
 						world.ChangeEntityLayer (False)
@@ -258,7 +268,7 @@ Type TEditor
 						world.RemoveEntities()
 					Case KEY_SPACE
 						GoToChooseMode()
-					Case 91, KEY_LALT
+					Case 91, KEY_LALT '91 is command
 						moveMode = True
 					Case KEY_F1
 						DebugStop()

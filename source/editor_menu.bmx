@@ -59,7 +59,7 @@ Type ExpMenu Extends TEditorExpansion
 '--------------------------------------------------------------------------	
 	Method Init( editor:TEditor )
 		Self.editor = editor
-		file = CreateMenu( "Scene", M_FILE,  WindowMenu( editor.window ) )
+		file = CreateMenu( "File", M_FILE,  WindowMenu( editor.window ) )
 		edit = CreateMenu( "Edit", M_FILE,  WindowMenu( editor.window ) )
 		view = CreateMenu( "View", M_FILE,  WindowMenu( editor.window ) )
 		'game = CreateMenu( "Game", M_FILE,  WindowMenu( editor.window ) )
@@ -151,6 +151,8 @@ Type ExpMenu Extends TEditorExpansion
 					TSelection.SelectAll (editor.world.EntityList)
 				ElseIf editor.exp_toolbar.mode = MODE_COLLISION
 					TSelection.SelectAll (editor.world.Polys)
+				ElseIf editor.exp_toolbar.mode = MODE_EVENT
+					TSelection.SelectAll (editor.world.Events)
 				EndIf
 				RedrawGadget( editor.window )
 				editor.exp_options.UpdatePropsUI()
@@ -159,6 +161,8 @@ Type ExpMenu Extends TEditorExpansion
 					TSelection.ClearSelected (editor.world.EntityList)
 				ElseIf editor.exp_toolbar.mode = MODE_COLLISION
 					TSelection.ClearSelected (editor.world.Polys)
+				ElseIf editor.exp_toolbar.mode = MODE_EVENT
+					TSelection.ClearSelected (editor.world.Events)
 				EndIf
 				RedrawGadget( editor.window )
 				editor.exp_options.UpdatePropsUI()
