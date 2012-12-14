@@ -2,6 +2,7 @@ Const WINDOW_MINX:Int = 680
 Const WINDOW_MINY:Int = 360
 Global CANVAS_WIDTH:Int = 960
 Global CANVAS_HEIGHT:Int = 640
+Const STANDARD_LAYERS:Int = 10
 
 
 '------------------------------------------------------------------------------

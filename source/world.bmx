@@ -24,9 +24,9 @@ Type EditorWorld Extends TWorld
 		rect_selection = New RectSelection
 		gfxChooseWorld = New TGraphicChooseWorld
 		size = New TPosition
-		size.Set (1000,1000)
+		size.Set (2000,1000)
 		gfxChooseWorld.Init()
-		SetMaxLayers( 10 )
+		SetMaxLayers( STANDARD_LAYERS )
 		NameList = New TMap
 		
 		'Ensure there is no lag in the beginning
@@ -1100,6 +1100,7 @@ Type TGraphicChooseWorld
 		Local posX:Float = savedMouseX'editor.world.cam.position.X
 		Local posY:Float = savedMouseY'editor.world.cam.position.Y
 		entity.SetPosition( posX, posY )
+		entity.SetLayer (editor.world.MAX_LAYERS/2)
 		lastCreated = SelectedGraphic()
 		entity.SetImage ( GraphicsPath[lastCreated] )
 		TSelection.ClearSelected( editor.world.EntityList )

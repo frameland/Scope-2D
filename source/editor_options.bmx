@@ -87,10 +87,10 @@ Type ExpOptions Extends TEditorExpansion
 		Local labelName:TGadget = CreateLabel( "Name",12,12,40,18,panelProps, LABEL_RIGHT )
 		prop_Name:TGadget = CreateTextField( 61,9,121,20,panelProps,0 )
 		labelLayer = CreateLabel( "Layer",12,41,40,18,panelProps, LABEL_RIGHT)
-		prop_Layer:TGadget = CreateSlider( 60,39,106,20,panelProps,5 )
-		SetSliderRange( prop_Layer, 1, TEditor.GetInstance().world.MAX_LAYERS )
+		prop_Layer:TGadget = CreateSlider( 60,39,106,20,panelProps, 5)
+		SetSliderRange( prop_Layer, 1, STANDARD_LAYERS)
 		SetSliderValue( prop_Layer, 1 )
-		prop_LayerNumber = CreateLabel ("1", 164, prop_Layer.ypos, 20, 20, panelProps, 8)
+		prop_LayerNumber = CreateLabel (STANDARD_LAYERS/2, 164, prop_Layer.ypos, 20, 20, panelProps, 8)
 		SetGadgetSensitivity( labelLayer, SENSITIZE_MOUSE )
 		Local sep2:TGadget = CreateLabel( "",0,67,panelProps.ClientWidth(),1,panelProps,3 )
 		
