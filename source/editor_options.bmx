@@ -32,7 +32,12 @@ Type ExpOptions Extends TEditorExpansion
 	Field prop_ScaleY:TGadget
 	Field prop_Rotation:TGadget
 	
+	Field propIsFrontSprite:TGadget
+	Field openScriptButtonEnter:TGadget
+	Field openScriptButtonAction:TGadget
+	
 	Field okButton:TGadget
+	
 	
 '--------------------------------------------------------------------------
 ' * Init Gadgets
@@ -127,6 +132,10 @@ Type ExpOptions Extends TEditorExpansion
 		prop_Rotation = CreateTextField( 14+15,283,50,20,panelProps,0 )
 		Local sep4:TGadget = CreateLabel( "",0,324,panelProps.ClientWidth(),1,panelProps,3 )
 		
+		propIsFrontSprite = CreateButton ("In Front", 29, 336, 130, 16, panelProps, BUTTON_CHECKBOX)
+		openScriptButtonEnter = CreateButton ("Open Enter Script", 26, 364, 121, 24, panelProps)
+		openScriptButtonAction = CreateButton ("Open Action Script", 26, 396, 121, 24, panelProps)
+		
 		okButton = CreateButton ("",205,0,40,24,panelProps, BUTTON_OK)
 		
 		SetGadgetFont (labelName, titleFont)
@@ -148,6 +157,9 @@ Type ExpOptions Extends TEditorExpansion
 		SetGadgetFont (prop_ScaleX, normalFont)
 		SetGadgetFont (prop_ScaleY, normalFont)
 		SetGadgetFont (prop_Rotation, normalFont)
+		SetGadgetFont (propIsFrontSprite, normalFont)
+		SetGadgetFont (openScriptButtonEnter, normalFont)
+		SetGadgetFont (openScriptButtonAction, normalFont)
 		
 		SetGadgetFilter (prop_Name, WordFilter)
 		SetGadgetFilter (prop_X, FloatNumberFilter)
@@ -180,10 +192,23 @@ Type ExpOptions Extends TEditorExpansion
 		EndIf
 	End Method
 
+
+'--------------------------------------------------------------------------
+' * Make sure only the right options are available to the user at a time
+'--------------------------------------------------------------------------
 	Method UpdatePropsUI()
 		Local editor:TEditor = TEditor.GetInstance()
 		Local selected:Int = editor.world.NrOfSelectedEntities()
 		Local entity:TEntity
+		
+		If editor.exp_toolbar.mode <> MODE_EVENT
+			HideGadget openScriptButtonEnter
+			HideGadget openScriptButtonAction
+		Else
+			ShowGadget openScriptButtonEnter
+			ShowGadget openScriptButtonAction
+		EndIf
+		
 		If selected = 0
 			DisableGadget panelProps
 			SetGadgetText (prop_X, "...")
@@ -193,6 +218,7 @@ Type ExpOptions Extends TEditorExpansion
 			SetGadgetText (prop_Rotation, "...")
 			Return
 		EndIf
+		
 		EnableGadget panelProps
 		If (selected = 1)
 			If editor.exp_toolbar.mode = MODE_EDIT
@@ -202,6 +228,7 @@ Type ExpOptions Extends TEditorExpansion
 				EnableGadget prop_Green
 				EnableGadget prop_Blue
 				EnableGadget prop_Layer
+				EnableGadget propIsFrontSprite
 				entity = editor.world.GetSelectedEntity()
 				SetGadgetText( prop_Name, entity.name )
 				SetSliderValue( prop_Layer, entity.layer )
@@ -210,14 +237,36 @@ Type ExpOptions Extends TEditorExpansion
 				SetSliderValue( prop_Green, entity.color.g )
 				SetSliderValue( prop_Blue, entity.color.b )
 				SetSliderValue( prop_Alpha, Float( entity.color.a * 100.0 ) )
-			Else
+				SetButtonState (propIsFrontSprite, entity.inFront)
+			ElseIf editor.exp_toolbar.mode = MODE_COLLISION
 				DisableGadget prop_Alpha
 				DisableGadget prop_Red
 				DisableGadget prop_Green
 				DisableGadget prop_Blue
 				DisableGadget prop_Layer
 				entity = editor.world.GetSelectedEntity()
-				SetGadgetText( prop_Name, entity.name )
+				EnableGadget prop_Name
+				SetGadgetText( prop_Name, entity.name)
+				SetButtonState (propIsFrontSprite, entity.isBaseline)
+			ElseIf editor.exp_toolbar.mode = MODE_EVENT
+				DisableGadget prop_Alpha
+				DisableGadget prop_Red
+				DisableGadget prop_Green
+				DisableGadget prop_Blue
+				DisableGadget prop_Layer
+				entity = editor.world.GetSelectedEntity()
+				EnableGadget prop_Name
+				SetGadgetText( prop_Name, entity.name)
+				SetButtonState (propIsFrontSprite, entity.isParticle)
+				If entity.isParticle
+					DisableGadget openScriptButtonEnter
+					DisableGadget openScriptButtonAction
+				Else
+					If entity.name <> ""
+						EnableGadget openScriptButtonEnter
+						EnableGadget openScriptButtonAction
+					EndIf
+				EndIf
 			EndIf
 		ElseIf (selected > 1)
 			If editor.exp_toolbar.mode = MODE_EDIT
@@ -225,7 +274,9 @@ Type ExpOptions Extends TEditorExpansion
 				DisableGadget prop_Name
 				SetSliderValue( prop_Layer, 1 )
 				SetSliderValue( prop_Alpha, 100 )
-			Else
+			ElseIf editor.exp_toolbar.mode = MODE_COLLISION
+				DisableGadget panelProps
+			ElseIf editor.exp_toolbar.mode = MODE_EVENT
 				DisableGadget panelProps
 			EndIf
 		EndIf
@@ -274,7 +325,7 @@ Type ExpOptions Extends TEditorExpansion
 		Local selected:Int = editor.world.NrOfSelectedEntities()
 		Local name:String = GadgetText( prop_Name )
 		If selected = 1
-			editor.world.GetSelectedEntity().SetName( editor.world.UniqueEntityName( name ) )
+			editor.world.GetSelectedEntity().SetName(name)
 		EndIf		
 	End Method
 
@@ -398,6 +449,7 @@ Type ExpOptions Extends TEditorExpansion
 		UpdatePropsUI()
 	End Method
 
+
 '--------------------------------------------------------------------------
 ' * X, Y, ScaleX, ScaleY, Rotation
 '--------------------------------------------------------------------------
@@ -466,6 +518,97 @@ Type ExpOptions Extends TEditorExpansion
 		SetGadgetText (prop_ScaleX, FormatedFloat (entity.scale.sx))
 		SetGadgetText (prop_ScaleY, FormatedFloat (entity.scale.sy))
 		SetGadgetText (prop_Rotation, Int (entity.rotation + 0.5))
+	End Method
+	
+
+'--------------------------------------------------------------------------
+' * Change Type (inFront, Baseline, Particle)
+'--------------------------------------------------------------------------
+	Method ChangeTypeOfEntity()
+		If editor.exp_toolbar.mode = MODE_EDIT
+			SetAsFrontSprite()
+		ElseIf editor.exp_toolbar.mode = MODE_COLLISION
+			SetAsBaseline()
+		ElseIf editor.exp_toolbar.mode = MODE_EVENT
+			SetAsParticle()
+		EndIf
+	End Method
+
+	Method SetAsFrontSprite()
+		Local editor:TEditor = TEditor.GetInstance()
+		editor.world.SaveState()
+		Local entity:TEntity
+		Local selected:Int = editor.world.NrOfSelectedEntities()
+		If selected = 1
+			entity = editor.world.GetSelectedEntity()
+			entity.inFront = ButtonState (propIsFrontSprite)
+		ElseIf selected > 1
+			Local button_state:Byte = ButtonState (propIsFrontSprite)
+			For entity = EachIn editor.world.EntityList
+				If entity.selection.isSelected
+					entity.inFront = button_state
+				EndIf
+			Next
+		EndIf
+		UpdatePropsUI()
+	End Method
+	
+	Method SetAsBaseline()
+		Local editor:TEditor = TEditor.GetInstance()
+		editor.world.SaveState()
+		Local entity:TEntity
+		Local selected:Int = editor.world.NrOfSelectedEntities()
+		If selected = 1
+			entity = editor.world.GetSelectedEntity()
+			entity.isBaseline = ButtonState (propIsFrontSprite)
+		ElseIf selected > 1
+			Local button_state:Byte = ButtonState (propIsFrontSprite)
+			For entity = EachIn editor.world.EntityList
+				If entity.selection.isSelected
+					entity.isBaseline = button_state
+				EndIf
+			Next
+		EndIf
+		UpdatePropsUI()
+	End Method
+	
+	Method SetAsParticle()
+		Local editor:TEditor = TEditor.GetInstance()
+		editor.world.SaveState()
+		Local entity:TEntity
+		Local selected:Int = editor.world.NrOfSelectedEntities()
+		If selected = 1
+			entity = editor.world.GetSelectedEntity()
+			entity.isParticle = ButtonState (propIsFrontSprite)
+		ElseIf selected > 1
+			Local button_state:Byte = ButtonState (propIsFrontSprite)
+			For entity = EachIn editor.world.EntityList
+				If entity.selection.isSelected
+					entity.isParticle = button_state
+				EndIf
+			Next
+		EndIf
+		UpdatePropsUI()
+	End Method
+	
+	Method OpenScript (typ:String)
+		If (editor.exp_toolbar.mode <> MODE_EVENT)
+			Return
+		EndIf
+		
+		Local editor:TEditor = TEditor.GetInstance()
+		Local selected:Int = editor.world.NrOfSelectedEntities()
+		If selected = 1
+			Local entity:TEntity = editor.world.GetSelectedEntity()
+			If Not entity.isParticle And entity.name <> ""
+				Local mapDir:String = ExtractDir (SceneFile.Instance().currentlyOpened) + "/"
+				Local file:String = mapDir + entity.name + "_" + typ + ".script"
+				If Not FileType (file)
+					CreateFile (file)
+				EndIf
+				OpenUrl (file)
+			EndIf
+		EndIf
 	End Method
 	
 End Type

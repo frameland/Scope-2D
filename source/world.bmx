@@ -7,7 +7,6 @@ Global MapWorkingDir:String
 Type EditorWorld Extends TWorld
 
 	Field editor:TEditor
-	Field NameList:TMap
 	Field gfxChooseWorld:TGraphicChooseWorld
 	Field rect_selection:RectSelection
 	Field size:TPosition 'Size of the World in Pixels
@@ -27,7 +26,6 @@ Type EditorWorld Extends TWorld
 		size.Set (2000,1000)
 		gfxChooseWorld.Init()
 		SetMaxLayers( STANDARD_LAYERS )
-		NameList = New TMap
 		
 		'Ensure there is no lag in the beginning
 		Local canvas:TGadget = editor.exp_canvas.canvas
@@ -272,6 +270,13 @@ Type EditorWorld Extends TWorld
 						EndIf
 					EndIf
 				Next
+				If editor.exp_toolbar.mode = MODE_COLLISION And entity.name <> ""
+					Local entityCollision:TEntity = GetEntityById (entity.name)
+					If entityCollision
+						Local difX:Int = entity.memory_position.x - entity.position.x
+						entityCollision.position.Set (entityCollision.memory_position.x - difX, entityCollision.memory_position.y)
+					EndIf
+				EndIf
 			Else 'Move Y
 				For entity = EachIn List
 					If entity.selection.isSelected
@@ -281,6 +286,13 @@ Type EditorWorld Extends TWorld
 							entity.position.Set( x - (x Mod grid) + entity.size.width/2, y - (y Mod grid) + entity.size.height/2 )
 						Else
 							entity.position.Set( x - (x Mod grid), y - (y Mod grid) )
+						EndIf
+					EndIf
+					If editor.exp_toolbar.mode = MODE_COLLISION And entity.name <> ""
+						Local entityCollision:TEntity = GetEntityById (entity.name)
+						If entityCollision
+							Local difY:Int = entity.memory_position.y - entity.position.y
+							entityCollision.position.Set (entityCollision.memory_position.x, entityCollision.memory_position.y - difY)
 						EndIf
 					EndIf
 				Next
@@ -295,6 +307,14 @@ Type EditorWorld Extends TWorld
 						entity.position.Set( x - (x Mod grid) + entity.size.width/2, y - (y Mod grid) + entity.size.height/2 )
 					Else
 						entity.position.Set( x - (x Mod grid), y - (y Mod grid) )
+					EndIf
+					If editor.exp_toolbar.mode = MODE_COLLISION And entity.name <> ""
+						Local entityCollision:TEntity = GetEntityById (entity.name)
+						If entityCollision
+							Local difX:Int = entity.memory_position.x - entity.position.x
+							Local difY:Int = entity.memory_position.y - entity.position.y
+							entityCollision.position.Set (entityCollision.memory_position.x - difX, entityCollision.memory_position.y - difY)
+						EndIf
 					EndIf
 				EndIf
 			Next
@@ -504,6 +524,12 @@ Type EditorWorld Extends TWorld
 			Select id
 				Case 1
 					entity.SavePosition()
+					If editor.exp_toolbar.mode = MODE_COLLISION And entity.name <> ""
+						Local colEntity:TEntity = GetEntityById(entity.name)
+						If colEntity
+							colEntity.SavePosition()
+						EndIf
+					EndIf
 				Case 2
 					entity.SaveScale()
 				Case 3
@@ -769,6 +795,15 @@ Type EditorWorld Extends TWorld
 		Return Null
 	End Method
 	
+	Method GetEntityById:TEntity (id:String)
+		For Local entity:TEntity = EachIn EntityList
+			If entity.name = id
+				Return entity
+			EndIf
+		Next
+		Return Null
+	End Method
+	
 	
 '--------------------------------------------------------------------------
 ' * Right Click Create
@@ -804,17 +839,20 @@ Type EditorWorld Extends TWorld
 		Return poly
 	End Method
 
-	Method CreateEvent()
+	Method CreateEvent:TEntity (selectMe:Byte = True)
 		Local event:TEntity = New TEntity
 		event.SetImage ("source/ressource/event.png", 0)
 		event.color.a = 0.7
 		event.SetColor (232, 214, 108)
 		event.SetPosition (editor.mouse.WorldCoordX(), editor.mouse.WorldCoordY())
-		TSelection.ClearSelected (Events)
-		editor.exp_options.OnTabChange()
-		editor.exp_options.ShowTransformAttributes (event)
-		event.selection.isSelected = True
+		If selectMe
+			TSelection.ClearSelected (Events)
+			editor.exp_options.OnTabChange()
+			editor.exp_options.ShowTransformAttributes (event)
+			event.selection.isSelected = True
+		EndIf
 		AddEvent (event)
+		Return event
 	End Method
 	
 	
@@ -852,7 +890,6 @@ Type EditorWorld Extends TWorld
 '--------------------------------------------------------------------------
 	Method AddEntity( entity:TEntity )
 		entity.link = EntityList.AddLast( entity )
-		entity.name = UniqueEntityName( entity.name )
 	End Method
 	
 	Method AddPoly (poly:TEntity)
@@ -861,19 +898,6 @@ Type EditorWorld Extends TWorld
 	
 	Method AddEvent (event:TEntity)
 		event.link = Events.AddLast (event)
-	End Method
-	
-	
-'--------------------------------------------------------------------------
-' * Make sure there is no name twice
-'--------------------------------------------------------------------------
-	Method UniqueEntityName:String( name:String )
-		If name = "" Then Return ""
-		While NameList.Contains( name )
-			name = name + "_copy"
-		Wend
-		NameList.Insert( name, name )
-		Return name
 	End Method
 	
 EndType

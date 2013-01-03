@@ -86,6 +86,9 @@ Type ExpToolbar Extends TEditorExpansion
 		Select mode
 			Case MODE_EDIT
 				Self.Enable()
+				If editor And editor.exp_options
+					SetGadgetText (editor.exp_options.propIsFrontSprite, "in Front")
+				EndIf
 			Case MODE_COLLISION
 				DisableGadgetItem (toolbar, 4)
 				DisableGadgetItem (toolbar, 5)
@@ -93,6 +96,7 @@ Type ExpToolbar Extends TEditorExpansion
 				EnableGadgetItem (toolbar, 8)
 				EnableGadgetItem (toolbar, 9)
 				EnableGadgetItem (toolbar, 10)
+				SetGadgetText (editor.exp_options.propIsFrontSprite, "Baseline")
 			Case MODE_EVENT
 				If selected = 3
 					OnClick (8)
@@ -103,6 +107,7 @@ Type ExpToolbar Extends TEditorExpansion
 				EnableGadgetItem (toolbar, 8)
 				EnableGadgetItem (toolbar, 9)
 				DisableGadgetItem (toolbar, 10)
+				SetGadgetText (editor.exp_options.propIsFrontSprite, "Particle")
 			Default
 				Throw ("Unknown mode!")
 		End Select

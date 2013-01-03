@@ -26,6 +26,11 @@ Type TEntity
 	Field texturePath:String
 	Field frame:Int = 0
 	
+	Field inFront:Byte = False
+	Field isBaseline:Byte = False
+	Field isParticle:Byte = False
+	
+	
 '--------------------------------------------------------------------------
 ' * For editor
 '--------------------------------------------------------------------------

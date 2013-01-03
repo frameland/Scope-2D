@@ -274,9 +274,7 @@ Type TEditor
 					Case KEY_F1
 						DebugStop()
 					Case KEY_TAB	
-						If state = 1
-							exp_toolbar.ActivateNextTool( Self )
-						ElseIf state = 3
+						If state = 3
 							world.gfxChooseWorld.NextPage()
 						EndIf
 					Default
@@ -319,6 +317,12 @@ Type TEditor
 						exp_options.SetBlue()
 					Case exp_options.prop_Alpha
 						exp_options.SetAlpha()
+					Case exp_options.propIsFrontSprite
+						exp_options.ChangeTypeOfEntity()
+					Case exp_options.openScriptButtonEnter
+						exp_options.OpenScript ("enter")
+					Case exp_options.openScriptButtonAction
+						exp_options.OpenScript ("action")
 					Case exp_options.okButton
 						exp_options.SetTransforms()
 					Default

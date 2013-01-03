@@ -42,9 +42,8 @@ Type TWorldState
 			dummy.collision = entity.collision.GetCopy( dummy )
 			dummy.layer = entity.layer
 			dummy.name = entity.name
-			dummy.frame = entity.frame
 			dummy.visible = entity.visible
-			dummy.active = entity.active
+			dummy.inFront = entity.inFront
 			dummy.selection.Init( dummy )
 			dummy.selection.isOverlapping = entity.selection.isOverlapping
 			dummy.selection.isSelected = entity.selection.isSelected

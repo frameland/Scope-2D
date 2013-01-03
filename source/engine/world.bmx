@@ -181,6 +181,7 @@ Type TWorld Abstract
 ' * Return True if entity is in view of the player, else False
 '--------------------------------------------------------------------------
 	Method IsInView:Int( entity:TEntity )
+		If Not entity.image Return False
 		Local size:Float = Max (entity.image.width*entity.scale.sx, entity.image.height*entity.scale.sy)
 		Return  (entity.position.x + size - entity.image.handle_x + cam.screen_center_x/cam.position.z) > cam.position.x And ..
 				(entity.position.y + size - entity.image.handle_y + cam.screen_center_y/cam.position.z) > cam.position.y And ..
@@ -188,6 +189,11 @@ Type TWorld Abstract
 				(entity.position.y + entity.image.handle_y - size - cam.screen_center_y/cam.position.z) < cam.position.y
 	End Method
 	
+	Function RectsOverlap:Int(x0:Float, y0:Float, w0:Float, h0:Float, x2:Float, y2:Float, w2:Float, h2:Float)
+		If x0 > (x2 + w2) Or (x0 + w0) < x2 Then Return False
+		If y0 > (y2 + h2) Or (y0 + h0) < y2 Then Return False
+		Return True
+	End Function
 	
 '------------------------------------------------------------------------------
 ' Every World must have these Routines
