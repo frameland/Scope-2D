@@ -165,6 +165,10 @@ Type TEditor
 					mouse.lastDown = MOUSE_RIGHT
 					mouse.SetDown()
 					world.OnRightClick()
+				ElseIf event.data = MOUSE_MIDDLE
+					mouse.lastDown = MOUSE_LEFT
+					mouse.SetDown()
+					moveMode = True
 				EndIf
 				world.Update()
 				
@@ -183,6 +187,9 @@ Type TEditor
 				EndIf
 				If world.rect_selection.started Then
 					world.rect_selection.EndSelection()
+				EndIf
+				If event.data = MOUSE_MIDDLE
+					moveMode = False
 				EndIf
 				world.Update()
 				If state <> 1 Then Return

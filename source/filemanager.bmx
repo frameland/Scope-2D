@@ -115,6 +115,7 @@ Type SceneFile
 		Local x:Float = (verts[0] + verts[2] + verts[4] + verts[6]) / 4.0 + 0.5
 		Local y:Float = (verts[1] + verts[3] + verts[5] + verts[7]) / 4.0 + 0.5
 		poly.SetPosition (x, y)
+		poly.name = data.Get("id")
 	End Method
 	
 	Method CreateSpriteCss (data:CssBlock, isFrontSprite:Byte = False)
@@ -317,6 +318,9 @@ Type SceneFile
 				stream.WriteString (verts[i] + ",")
 			Next
 			stream.WriteString (verts[verts.Length-1])
+			If entity.name <> ""
+				stream.WriteString (";id:" + entity.name)
+			EndIf
 			stream.WriteString (";}~n")
 		Next
 		
@@ -331,6 +335,9 @@ Type SceneFile
 				stream.WriteString (verts[i] + ",")
 			Next
 			stream.WriteString (verts[verts.Length-1])
+			If entity.name <> ""
+				stream.WriteString (";id:" + entity.name)
+			EndIf
 			stream.WriteString (";}~n")
 		Next
 		
