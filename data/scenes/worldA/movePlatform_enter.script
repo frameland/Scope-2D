@@ -1,4 +1,0 @@
-stopActor: "Hero"
-moveTile: "platform1", 500, 0, 3000
-wait: 4000
-activateActor: "Hero"

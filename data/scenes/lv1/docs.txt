@@ -1,0 +1,8 @@
+lv1 global variable:
+----------------------
+0: first switch
+1: counter for stone creation
+2: pause
+3: intro waiting for keypress right
+4: first switch help
+5: jump help

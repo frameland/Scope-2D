@@ -569,7 +569,7 @@ Type EditorWorld Extends TWorld
 		End Select
 		RenderWorldBorder()
 		
-		'DebugRender( renderedSprites )
+		DebugRender( renderedSprites )
 	EndMethod
 	
 	Method RenderEditMode:Int()
@@ -674,10 +674,8 @@ Type EditorWorld Extends TWorld
 		Local height:Int = 4
 		ResetDrawing()
 		SetHandle 0,0
-		SetColor 0, 0, 0
+		SetColor 120, 120, 120
 		SetAlpha 1
-		'DrawText "Fps: " + GetFps(), 4, height
-		'height:+16
 		DrawText("CamX:" + Int(cam.position.x), 4, height)
 		height:+ 16
 		DrawText("CamY:" + Int(cam.position.y), 4, height)

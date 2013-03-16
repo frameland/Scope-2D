@@ -1,0 +1,9 @@
+setMasterActor: "Hero"
+var: direction
+get: "direction", direction
+
+if: direction = "right"
+	tweenStyle: 5
+	cameraFocus: "Hero", 1500
+	zoomCameraTo: 0.25, 2200
+end:

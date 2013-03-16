@@ -1,0 +1,30 @@
+stopActor: "Hero"
+pauseActors: yes
+
+// preload all Sounds
+preloadSound: "portal.wav"
+preloadSound: "gate_open.wav"
+preloadSound: "glitter.wav"
+preloadSound: "push_switch.wav"
+
+// setup camera
+moveCameraTo: -3352, 2372, 20
+zoomCameraTo: 0.24, 20
+wait: 100
+
+//skip intro
+moveTile: "gate", 0, 350, 500
+showHelp: "right", -1800, 2900, -1
+pauseActors: no
+return:
+
+// move cam to logo + move logo up
+moveCameraTo: -3139, 2829, 7000
+zoomCameraTo: 0.23, 5000
+wait: 3000
+
+moveTile: "condorra", 0, -1000, 5000
+wait: 5000
+pauseActors: no
+
+showHelp: "right", -1800, 2900, -1

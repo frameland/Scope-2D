@@ -1,0 +1,4 @@
+if: $lv1(4) = no
+	showHelp: "up", 2412, 1600, -1
+	set: $lv1(4), yes
+end:

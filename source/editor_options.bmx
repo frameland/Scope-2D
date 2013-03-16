@@ -608,7 +608,7 @@ Type ExpOptions Extends TEditorExpansion
 			Local entity:TEntity = editor.world.GetSelectedEntity()
 			If Not entity.isParticle And entity.name <> ""
 				Local mapDir:String = ExtractDir (SceneFile.Instance().currentlyOpened) + "/"
-				Local file:String = mapDir + typ + entity.name + ".script"
+				Local file:String = mapDir + typ + "/" + entity.name + ".script"
 				If Not FileType (file)
 					CreateFile (file)
 				EndIf

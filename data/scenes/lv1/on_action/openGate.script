@@ -1,0 +1,41 @@
+// check if already opening, if so -> return
+setMasterTile: "gate"
+var: gateY
+get: "tileY", gateY
+if: gateY > 870
+	return:
+end:
+
+// pause other actions
+wait: 400
+set: $lv1(2), yes
+
+stopActor: "Hero"
+pauseActors: yes
+
+wait: 500
+playSound: "push_switch.wav"
+
+tweenStyle: 5
+moveCameraTo: 10489, 1139, 1500
+zoomCameraTo: 0.32, 1500
+wait: 1000
+
+tweenStyle: 0
+moveTile: "gate", 0, 478, 3000
+playSound: "gate_open.wav"
+wait: 3500
+tweenStyle: 4
+moveTile: "gate", 0, -478, 20500
+wait: 500
+
+tweenStyle: 5
+moveCameraTo: 9716, 1383, 2200
+zoomCameraTo: 0.27, 2200
+wait: 2800
+
+activateActor: "Hero"
+pauseActors: no
+
+// resume
+set: $lv1(2), no

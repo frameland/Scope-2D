@@ -1,0 +1,20 @@
+if: $lv1(0) = no
+	return:
+end:
+
+setMasterActor: "Hero"
+var: direction
+get: "direction", direction
+
+if: direction = "left"
+	tweenStyle: 5
+	cameraFocus: "null", 1
+	moveCameraTo: 3294, 1616, 2200
+	zoomCameraTo: 0.30, 2200
+end:
+
+if: $lv1(5) = no
+	if: direction = "right"
+		showHelp: "jump", 3297, 1500, 5000
+	end:
+end:
