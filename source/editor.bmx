@@ -326,6 +326,8 @@ Type TEditor
 						exp_options.SetAlpha()
 					Case exp_options.propIsFrontSprite
 						exp_options.ChangeTypeOfEntity()
+					Case exp_options.objectTriggering
+						exp_options.SetObjectTriggering()
 					Case exp_options.openScriptButtonEnter
 						exp_options.OpenScript ("on_enter")
 					Case exp_options.openScriptButtonAction

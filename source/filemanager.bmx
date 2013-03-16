@@ -270,6 +270,8 @@ Type SceneFile
 		Local entity:TEntity
 		Local i:Int
 		Local layerCounter:Int
+		
+		'Sprites
 		For layerCounter = 1 To world.MAX_LAYERS
 			For entity = EachIn Self.GetSprites()
 				If (entity.layer <> layerCounter) Continue 
@@ -396,6 +398,9 @@ Type SceneFile
 			stream.WriteString ("y:" + Int(entity.position.y) + ";")
 			stream.WriteString ("id:" + entity.name + ";")
 			stream.WriteString ("radius:" + Int(entity.scale.sx * entity.image.width) + ";")
+			If entity.allowObjectTriggering
+				stream.WriteString ("allowObjectTriggering:1;")
+			EndIf
 			stream.WriteString ("}~n")
 		Next
 		
@@ -553,13 +558,6 @@ Type SceneFile
 	
 	
 End Type
-
-
-
-
-
-
-
 
 
 

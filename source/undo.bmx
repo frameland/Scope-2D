@@ -44,6 +44,7 @@ Type TWorldState
 			dummy.collision = entity.collision.GetCopy( dummy )
 			dummy.isParticle = entity.isParticle
 			dummy.isBaseline = entity.isBaseline
+			dummy.allowObjectTriggering = entity.allowObjectTriggering
 			dummy.layer = entity.layer
 			dummy.name = entity.name
 			dummy.visible = entity.visible

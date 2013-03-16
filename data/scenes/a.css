@@ -1,0 +1,7 @@
+General{Width:2000;Height:1000;Layers:10;Sprites:4;SpritesFront:0;Polys:0;Baselines:0;Triggers:2;Particles:0;Savepoints:0;}
+sprite1{x:350;y:117;image:rollingstone.png;}
+sprite2{x:461;y:133;image:rollingstone.png;}
+sprite3{x:556;y:153;image:rollingstone.png;}
+sprite4{x:197;y:149;scalex:0.37;scaley:0.37;layer:5;image:Robot11.png;}
+trigger1{x:206;y:114;id:;radius:100;}
+trigger2{x:458;y:130;id:;radius:100;}

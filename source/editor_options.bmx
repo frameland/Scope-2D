@@ -33,6 +33,7 @@ Type ExpOptions Extends TEditorExpansion
 	Field prop_Rotation:TGadget
 	
 	Field propIsFrontSprite:TGadget
+	Field objectTriggering:TGadget
 	Field openScriptButtonEnter:TGadget
 	Field openScriptButtonAction:TGadget
 	
@@ -133,8 +134,10 @@ Type ExpOptions Extends TEditorExpansion
 		Local sep4:TGadget = CreateLabel( "",0,324,panelProps.ClientWidth(),1,panelProps,3 )
 		
 		propIsFrontSprite = CreateButton ("In Front", 29, 336, 130, 16, panelProps, BUTTON_CHECKBOX)
-		openScriptButtonEnter = CreateButton ("Open Enter Script", 26, 364, 121, 24, panelProps)
-		openScriptButtonAction = CreateButton ("Open Action Script", 26, 396, 121, 24, panelProps)
+		objectTriggering = CreateButton ("Object-Triggering", 29, 364, 150, 16, panelProps, BUTTON_CHECKBOX)
+		HideGadget objectTriggering
+		openScriptButtonEnter = CreateButton ("OnEnter Script", 26, 396, 140, 24, panelProps)
+		openScriptButtonAction = CreateButton ("OnAction Script", 26, 428, 140, 24, panelProps)
 		
 		okButton = CreateButton ("",205,0,40,24,panelProps, BUTTON_OK)
 		
@@ -145,7 +148,6 @@ Type ExpOptions Extends TEditorExpansion
 		SetGadgetFont (labelBlue, titleFont)
 		SetGadgetFont (labelAlpha, titleFont)
 		SetGadgetFont (prop_Name, normalFont)
-		SetGadgetFont (select_MultiSelect, normalFont)
 		SetGadgetFont (prop_LayerNumber, normalFont)
 		SetGadgetFont (labelX, titleFont)
 		SetGadgetFont (labelY, titleFont)
@@ -158,6 +160,7 @@ Type ExpOptions Extends TEditorExpansion
 		SetGadgetFont (prop_ScaleY, normalFont)
 		SetGadgetFont (prop_Rotation, normalFont)
 		SetGadgetFont (propIsFrontSprite, normalFont)
+		SetGadgetFont (objectTriggering, normalFont)
 		SetGadgetFont (openScriptButtonEnter, normalFont)
 		SetGadgetFont (openScriptButtonAction, normalFont)
 		
@@ -204,9 +207,11 @@ Type ExpOptions Extends TEditorExpansion
 		If editor.exp_toolbar.mode <> MODE_EVENT
 			HideGadget openScriptButtonEnter
 			HideGadget openScriptButtonAction
+			HideGadget objectTriggering
 		Else
 			ShowGadget openScriptButtonEnter
 			ShowGadget openScriptButtonAction
+			ShowGadget objectTriggering
 		EndIf
 		
 		If selected = 0
@@ -258,15 +263,19 @@ Type ExpOptions Extends TEditorExpansion
 				EnableGadget prop_Name
 				SetGadgetText( prop_Name, entity.name)
 				SetButtonState (propIsFrontSprite, entity.isParticle)
+				SetButtonState (objectTriggering, entity.allowObjectTriggering)
 				If entity.isParticle
 					DisableGadget openScriptButtonEnter
 					DisableGadget openScriptButtonAction
+					DisableGadget objectTriggering
 				Else
 					If entity.name <> ""
 						EnableGadget openScriptButtonEnter
 						EnableGadget openScriptButtonAction
 					EndIf
+					EnableGadget objectTriggering
 				EndIf
+				
 			EndIf
 		ElseIf (selected > 1)
 			If editor.exp_toolbar.mode = MODE_EDIT
@@ -617,6 +626,17 @@ Type ExpOptions Extends TEditorExpansion
 		EndIf
 	End Method
 	
+	Method SetObjectTriggering()
+		Local editor:TEditor = TEditor.GetInstance()
+		editor.world.SaveState()
+		Local entity:TEntity
+		Local selected:Int = editor.world.NrOfSelectedEntities()
+		If selected = 1
+			entity = editor.world.GetSelectedEntity()
+			entity.allowObjectTriggering = ButtonState (objectTriggering)
+		EndIf
+		UpdatePropsUI()
+	End Method
 End Type
 
 
