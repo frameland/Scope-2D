@@ -325,7 +325,13 @@ Type ExpOptions Extends TEditorExpansion
 		Local selected:Int = editor.world.NrOfSelectedEntities()
 		Local name:String = GadgetText( prop_Name )
 		If selected = 1
-			editor.world.GetSelectedEntity().SetName(name)
+			Local entity:TEntity = editor.world.GetSelectedEntity()
+			If editor.exp_toolbar.mode = MODE_EVENT And entity.isParticle = False
+			        Local mapDir:String = ExtractDir(SceneFile.Instance().currentlyOpened)
+			        RenameFile(mapDir + "/on_action/" + entity.name + ".script", mapDir + "/on_action/" + name + ".script")
+			        RenameFile(mapDir + "/on_enter/" + entity.name + ".script", mapDir + "/on_action/" + name + ".script")
+			EndIf
+			entity.SetName(name)
 		EndIf		
 	End Method
 
@@ -602,7 +608,7 @@ Type ExpOptions Extends TEditorExpansion
 			Local entity:TEntity = editor.world.GetSelectedEntity()
 			If Not entity.isParticle And entity.name <> ""
 				Local mapDir:String = ExtractDir (SceneFile.Instance().currentlyOpened) + "/"
-				Local file:String = mapDir + entity.name + "_" + typ + ".script"
+				Local file:String = mapDir + typ + entity.name + ".script"
 				If Not FileType (file)
 					CreateFile (file)
 				EndIf

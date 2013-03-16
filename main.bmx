@@ -7,7 +7,6 @@ EndRem
 'buildopt: release
 'buildopt: gui
 'buildopt: execute
-
 SuperStrict
 
 

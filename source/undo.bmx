@@ -33,6 +33,8 @@ Type TWorldState
 			dummy = New TEntity
 			dummy.position.Set( entity.position.x, entity.position.y )
 			dummy.scale.Set( entity.scale.sx, entity.scale.sy )
+			dummy.flipH = entity.flipH
+			dummy.flipV = entity.flipV
 			dummy.image = entity.image
 			dummy.texturePath = entity.texturePath
 			dummy.rotation = entity.rotation
@@ -40,6 +42,8 @@ Type TWorldState
 			dummy.color.a = entity.color.a
 			dummy.size.Set( entity.size.width, entity.size.height )
 			dummy.collision = entity.collision.GetCopy( dummy )
+			dummy.isParticle = entity.isParticle
+			dummy.isBaseline = entity.isBaseline
 			dummy.layer = entity.layer
 			dummy.name = entity.name
 			dummy.visible = entity.visible

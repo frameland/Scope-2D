@@ -408,6 +408,11 @@ Type EditorWorld Extends TWorld
 		Local entity:TEntity
 		For entity = EachIn List
 			If entity.selection.isSelected Then
+				If editor.exp_toolbar.mode = MODE_EVENT
+				        Local mapDir:String = ExtractDir(SceneFile.Instance().currentlyOpened)
+				        DeleteFile(mapDir + "/on_action/" + entity.name + ".script")
+				        DeleteFile(mapDir + "/on_enter/" + entity.name + ".script")
+				EndIf
 				entity.Remove()
 			EndIf
 		Next
@@ -673,7 +678,11 @@ Type EditorWorld Extends TWorld
 		SetAlpha 1
 		'DrawText "Fps: " + GetFps(), 4, height
 		'height:+16
-		DrawText "Sprites OnScreen: " + renderedSprites, 4, height
+		DrawText("CamX:" + Int(cam.position.x), 4, height)
+		height:+ 16
+		DrawText("CamY:" + Int(cam.position.y), 4, height)
+		height:+ 16
+		DrawText("CamZoom:" + FormatedFloat(cam.position.z), 4, height)
 		height:+ 16
 		DrawText ("Sprites: " + EntityList.Count(), 4, height)
 	End Method
@@ -765,6 +774,7 @@ Type EditorWorld Extends TWorld
 		ResetView()
 		EntityList.Clear()
 		Polys.Clear()
+		Events.Clear()
 		editor.WorldState.ClearAll()
 		SceneProperty.Clear()
 		NormalSceneProperty.Clear()
@@ -913,8 +923,8 @@ Type TGraphicChooseWorld
 	
 	Const EDGE_DISTANCE_X:Int = 160
 	Const EDGE_DISTANCE_Y:Int = 20
-	Const CONTENT_SIZE:Int = 112
-	Const IMAGE_MAXSIZE:Float = 108
+	Const CONTENT_SIZE:Int = 150
+	Const IMAGE_MAXSIZE:Float = 120
 	Field COLUMNS:Int
 	Field PAGE_ITEMS:Int
 	
@@ -1044,6 +1054,7 @@ Type TGraphicChooseWorld
 				Return
 			EndIf
 		EndIf
+		
 		SetAlpha introAlpha
 		SetColor 240,240,240
 		DrawRect 140, 0, CANVAS_WIDTH - 280, CANVAS_HEIGHT'-30
@@ -1052,6 +1063,7 @@ Type TGraphicChooseWorld
 		DrawRect CANVAS_WIDTH - 140,0,1,CANVAS_HEIGHT'-30
 		DrawRect 140,CANVAS_HEIGHT,CANVAS_WIDTH-280,1
 		SetColor 255,255,255
+		
 		Local i:Int
 		Local maxVal:Int
 		Local image:TImage
@@ -1093,18 +1105,18 @@ Type TGraphicChooseWorld
 					EndIf
 				EndIf
 				SetScale scaleX, scaleY
-				If id = i
-					SetAlpha 0.8*introAlpha
-				Else
-					SetAlpha 1.0*introAlpha
-				EndIf
 				DrawImage image, XPos(i), YPos(i)
 				scaleX = 1.0
 				scaleY = 1.0
 			EndIf
 		Next
+		
+		RenderEntityBorder()
+		RenderSelected(id)
+		
 		ResetDrawing()
 		SetOrigin(0,0)
+		
 		'Draw Page Nr
 		SetColor 50,50,50
 		If page > NrOfPages()
@@ -1115,7 +1127,37 @@ Type TGraphicChooseWorld
 		DrawText (text, CANVAS_WIDTH/2-TextWidth(text)/2, CANVAS_HEIGHT-22 )
 	EndMethod
 
-
+	Method RenderSelected(index:Int)
+		If index = -1 Return
+		Local image:TImage = GraphicsArray[index]
+		If Not image Return
+		SetAlpha (0.8*introAlpha)
+		SetColor(62, 133, 226)
+		SetScale (1.0, 1.0)
+		DrawRect2(XPos(index) - IMAGE_MAXSIZE/2 - 4, YPos(index)-IMAGE_MAXSIZE/2 - 4, IMAGE_MAXSIZE + 8, IMAGE_MAXSIZE + 8, 2)
+		SetAlpha (0.2 * introAlpha)
+		SetBlend (LIGHTBLEND)
+		DrawRect(XPos(index) - IMAGE_MAXSIZE/2, YPos(index)-IMAGE_MAXSIZE/2, IMAGE_MAXSIZE, IMAGE_MAXSIZE)
+		SetBlend (ALPHABLEND)
+		SetColor(255, 255, 255)
+	End Method
+	
+	Method RenderEntityBorder()
+		SetScale (1, 1)
+		SetAlpha (1 * introAlpha)
+		SetColor (200, 200, 200)
+		Local from:Int = page * PAGE_ITEMS
+		Local finish:Int = from + PAGE_ITEMS
+		Local IMAGE_HALF:Int = IMAGE_MAXSIZE / 2.0
+		If finish > gfxLength
+			finish = gfxLength
+		EndIf
+		For Local i:Int = from Until finish
+			DrawRect2 (XPos(i) - IMAGE_HALF, YPos(i) - IMAGE_HALF, IMAGE_MAXSIZE, IMAGE_MAXSIZE)
+		Next
+	End Method
+	
+	
 '--------------------------------------------------------------------------
 ' * Creates an Entity in the middle of the screen
 '--------------------------------------------------------------------------
@@ -1140,6 +1182,7 @@ Type TGraphicChooseWorld
 		Local entity:TEntity = New TEntity
 		entity.SetPosition( posX, posY )
 		entity.SetImage ( GraphicsPath[lastCreated] )
+		entity.SetLayer (editor.world.MAX_LAYERS/2)
 		TSelection.ClearSelected( editor.world.EntityList )
 		entity.selection.isSelected = True
 		editor.world.AddEntity( entity )

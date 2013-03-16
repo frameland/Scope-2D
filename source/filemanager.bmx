@@ -92,6 +92,8 @@ Type SceneFile
 				CreateTrigger (block)
 			ElseIf block.id.StartsWith ("particle")
 				CreateTrigger (block, True)
+			ElseIf block.id.StartsWith ("savepoint")
+				CreateTrigger (block, False)
 			EndIf
 		Next
 		
@@ -152,6 +154,8 @@ Type SceneFile
 					entity.layer = data.GetInt ("layer", 1)
 				Default
 			End Select
+			entity.flipH = data.GetInt ("flipX")
+			entity.flipV = data.GetInt ("flipY")
 		Next
 		TEditor.GetInstance().world.AddEntity (entity)
 	End Method
@@ -160,6 +164,9 @@ Type SceneFile
 		Local event:TEntity = TEditor.GetInstance().world.CreateEvent (False)
 		If isParticle
 			event.isParticle = True
+		EndIf
+		If data.id.StartsWith("savepoint")
+			event.name = data.id
 		EndIf
 		Local prop:String
 		For prop = EachIn data.Properties.Keys()
@@ -195,6 +202,7 @@ Type SceneFile
 		name = NameCssFile (name)
 		currentlyOpened = name
 		WriteCssFile( name )
+		RemoveEmptyScripts()
 	End Method
 
 	Method SaveAs()
@@ -204,12 +212,43 @@ Type SceneFile
 		name = NameCssFile (name)
 		currentlyOpened = name
 		WriteCssFile( name )
+		RemoveEmptyScripts()
 	End Method
 	
 	Method NameCssFile:String (name:String)
 		name = StripExt (name)
 		name = name + ".css"
 		Return name
+	End Method
+	
+	Method RemoveEmptyScripts()
+		If currentlyOpened = ""
+		        Return
+		EndIf
+	
+		Local mapDir:String = ExtractDir(currentlyOpened)
+		Local onActionDir:String = mapDir + "/on_action/"
+		Local onEnterDir:String = mapDir + "/on_enter/"
+		Local actionDirContents:String[] = LoadDir(onActionDir)
+		Local enterDirContents:String[] = LoadDir(onEnterDir)
+	
+		Local file:String
+		For file = EachIn actionDirContents
+		        If file.EndsWith(".script")
+		                Local scriptFile:String = LoadString(onActionDir + file)
+		                If scriptFile.Length = 0
+		                        DeleteFile(onActionDir + file)
+		                EndIf
+		        EndIf
+		Next
+		For file = EachIn enterDirContents
+		        If file.EndsWith(".script")
+		                Local scriptFile:String = LoadString(onEnterDir + file)
+		                If scriptFile.Length = 0
+		                        DeleteFile(onEnterDir + file)
+		                EndIf
+		        EndIf
+		Next
 	End Method
 	
 	
@@ -250,7 +289,10 @@ Type SceneFile
 				If entity.color.r <> 255	Then stream.WriteString( "red:" + entity.color.r + sc)
 				If entity.color.g <> 255	Then stream.WriteString( "green:" + entity.color.g + sc)
 				If entity.color.b <> 255	Then stream.WriteString( "blue:" + entity.color.b + sc)
-
+				
+				If entity.flipH Then stream.WriteString( "flipX:" + Int(entity.flipH) + sc)
+				If entity.flipV Then stream.WriteString( "flipY:" + Int(entity.flipH) + sc)
+					
 				If entity.visible <> 1		Then stream.WriteString( "visible:" + entity.visible + sc )
 				If entity.layer > 1 		Then stream.WriteString( "layer:"   + entity.layer + sc )
 				If entity.name		 		Then stream.WriteString( "name:"    + entity.name  + sc )
@@ -289,7 +331,10 @@ Type SceneFile
 				If entity.color.r <> 255	Then stream.WriteString( "red:" + entity.color.r + sc)
 				If entity.color.g <> 255	Then stream.WriteString( "green:" + entity.color.g + sc)
 				If entity.color.b <> 255	Then stream.WriteString( "blue:" + entity.color.b + sc)
-
+				
+				If entity.flipH Then stream.WriteString( "flipX:" + Int(entity.flipH) + sc)
+				If entity.flipV Then stream.WriteString( "flipY:" + Int(entity.flipH) + sc)
+						
 				If entity.visible <> 1		Then stream.WriteString( "visible:" + entity.visible + sc )
 				If entity.layer > 1 		Then stream.WriteString( "layer:"   + entity.layer + sc )
 				If entity.name		 		Then stream.WriteString( "name:"    + entity.name  + sc )
@@ -347,10 +392,9 @@ Type SceneFile
 		For entity = EachIn theTriggers
 			i:+1
 			stream.WriteString ("trigger" + i + "{")
-			If (entity.name = "") Then entity.name = String(i)
-			stream.WriteString ("id:" + entity.name + ";")
 			stream.WriteString ("x:" + Int(entity.position.x) + ";")
 			stream.WriteString ("y:" + Int(entity.position.y) + ";")
+			stream.WriteString ("id:" + entity.name + ";")
 			stream.WriteString ("radius:" + Int(entity.scale.sx * entity.image.width) + ";")
 			stream.WriteString ("}~n")
 		Next
@@ -372,6 +416,15 @@ Type SceneFile
 			stream.WriteString ("}~n")
 		Next
 		
+		'Savepoints
+		Local theSavepoints:TList = GetSavepoints()
+		For entity = EachIn theSavepoints
+		        stream.WriteString(entity.name + "{")
+		        stream.WriteString ("x:" + Int(entity.position.x) + ";")
+		        stream.WriteString ("y:" + Int(entity.position.y) + ";")
+				stream.WriteString ("}~n")
+		Next
+		
 		stream.Close()
 	End Method
 	
@@ -380,14 +433,7 @@ Type SceneFile
 		Local prop:String
 		Local val:String
 		Local i:SceneProperty
-		rem
-		Local j:NormalSceneProperty
-		For j = EachIn NormalSceneProperty.List
-			prop = GadgetText (j.labelProperty)
-			val = GadgetText (j.labelValue)
-			returnString = returnString + prop + ":" + val + ";"
-		Next
-		endrem
+
 		returnString:+ "Width:" + Int (TEditor.GetInstance().world.size.x) + ";"
 		returnString:+ "Height:" + Int (TEditor.GetInstance().world.size.y) + ";"
 		returnString:+ "Layers:" + TEditor.GetInstance().world.MAX_LAYERS + ";"
@@ -397,6 +443,7 @@ Type SceneFile
 		returnString:+ "Baselines:" + GetBaselines().Count() + ";"
 		returnString:+ "Triggers:" + GetTriggers().Count() + ";"
 		returnString:+ "Particles:" + GetParticles().Count() + ";"
+		returnString:+ "Savepoints:" + GetSavepoints().Count() + ";"
 		returnString:+"}"
 		
 		If SceneProperty.size > 1
@@ -409,6 +456,13 @@ Type SceneFile
 			Next
 			returnString = returnString + "}"
 		EndIf
+		
+		Local j:NormalSceneProperty
+		For j = EachIn SceneProperty.List
+		        prop = GadgetText (j.labelProperty)
+		        val = GadgetText (j.labelValue)
+		        returnString = returnString + "~n" + prop + "{value:" + val + ";}"
+		Next
 		
 		Return returnString
 	End Method
@@ -465,7 +519,7 @@ Type SceneFile
 		Local triggers:TList = New TList
 		Local t:TEntity
 		For t = EachIn TEditor.GetInstance().world.Events
-			If Not t.isParticle
+			If Not t.isParticle And (t.name.StartsWith("savepoint") = False)
 				triggers.AddLast (t)
 			EndIf
 		Next
@@ -482,6 +536,21 @@ Type SceneFile
 		Next
 		Return particles
 	End Method
+	
+	Method GetSavepoints:TList()
+        Local list:TList = New TList
+        Local event:TEntity
+        Local i:Int
+        For event = EachIn TEditor.GetInstance().world.Events
+			If event.name.StartsWith("savepoint")
+				i:+1
+				event.name = "savepoint" + i
+				list.AddLast(event)
+			EndIf
+        Next
+        Return list
+	End Method
+	
 	
 End Type
 

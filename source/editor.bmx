@@ -327,9 +327,9 @@ Type TEditor
 					Case exp_options.propIsFrontSprite
 						exp_options.ChangeTypeOfEntity()
 					Case exp_options.openScriptButtonEnter
-						exp_options.OpenScript ("enter")
+						exp_options.OpenScript ("on_enter")
 					Case exp_options.openScriptButtonAction
-						exp_options.OpenScript ("action")
+						exp_options.OpenScript ("on_action")
 					Case exp_options.okButton
 						exp_options.SetTransforms()
 					Default

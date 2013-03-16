@@ -56,11 +56,11 @@ Type TCamera
 		EndIf
 
 		'Camera will stop at outer borders of world
-		If (position.x > worldSize.x)
-			position.x = worldSize.x
+		If (position.x > worldSize.x + border)
+			position.x = worldSize.x + border
 		EndIf
-		If (position.y > worldSize.y)
-			position.y = worldSize.y
+		If (position.y > worldSize.y + border)
+			position.y = worldSize.y + border
 		EndIf
 		
 		'Camera stops before 0,0 border
