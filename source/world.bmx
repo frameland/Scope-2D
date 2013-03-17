@@ -432,6 +432,8 @@ Type EditorWorld Extends TWorld
 				dummy = New TEntity
 				dummy.position.Set( entity.position.x + dx, entity.position.y + dy )
 				dummy.scale.Set( entity.scale.sx, entity.scale.sy )
+				dummy.flipH = entity.flipH
+				dummy.flipV = entity.flipV
 				dummy.image = entity.image
 				dummy.texturePath = entity.texturePath
 				dummy.rotation = entity.rotation
@@ -439,11 +441,13 @@ Type EditorWorld Extends TWorld
 				dummy.color.a = entity.color.a
 				dummy.size.Set( entity.size.width, entity.size.height )
 				dummy.collision = entity.collision.GetCopy( dummy )
+				dummy.isParticle = entity.isParticle
+				dummy.isBaseline = entity.isBaseline
+				dummy.allowObjectTriggering = entity.allowObjectTriggering
+				dummy.inFront = entity.inFront
 				dummy.layer = entity.layer
 				dummy.name = entity.name
-				dummy.frame = entity.frame
 				dummy.visible = entity.visible
-				dummy.active = entity.active
 				dummy.selection.Init( dummy )
 				If editor.exp_toolbar.mode = MODE_EDIT
 					AddEntity( dummy )

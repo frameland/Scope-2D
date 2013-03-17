@@ -152,9 +152,6 @@ Type TEntity
 		name = newName
 	End Method
 	
-	Method SetFrame( frame:Int )
-		Self.frame = frame
-	End Method
 
 '------------------------------------------------------------------------------
 ' * Getters

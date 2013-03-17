@@ -182,6 +182,8 @@ Type SceneFile
 				Case "radius"
 					event.scale.sx = data.GetInt ("radius") / Float(event.image.width)
 					event.scale.sy = event.scale.sx
+				Case "allowObjectTriggering"
+					event.allowObjectTriggering = data.GetInt("allowObjectTriggering")
 				Default
 			End Select
 		Next
