@@ -10,6 +10,8 @@ Const STANDARD_LAYERS:Int = 10
 '------------------------------------------------------------------------------
 Type TEditor
 	
+	Const VERSION:String = "r5"
+	
 	Global instance:TEditor
 	Field window:TGadget
 	Field mouse:TGuiMouse
