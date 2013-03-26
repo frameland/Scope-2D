@@ -93,6 +93,7 @@ Type GridSizeWindow
 	Field labelValue:TGadget
 	Field txtValue:TGadget
 	Field stepper:TGadget
+	Field okButton:TGadget
 	
 	Method New()
 		Local editor:TEditor = TEditor.GetInstance()
@@ -100,6 +101,7 @@ Type GridSizeWindow
 		CreateLabel( "Grid Size:",0,12,142,20,window,8 )
 		txtValue = CreateTextfield( 150,11,70,20,window,0 )
 		stepper = CreateSlider( 222,10,15,22,window,SLIDER_STEPPER|SLIDER_VERTICAL )
+		okButton = CreateButton("ok", 0, -30, 24, 24, window, BUTTON_OK)
 		SetSliderRange( stepper, 0, 1 )
 		SetGadgetFilter (txtValue, NumberFilter)
 		ActivateGadget( window )
@@ -132,6 +134,9 @@ Type GridSizeWindow
 		Select event.id
 			Case EVENT_WINDOWCLOSE
 				Local paddingValue:Int = Int(GadgetText( txtValue ))
+				If GadgetText( txtValue ) = ""
+					SetGadgetText( txtValue, "1" )
+				EndIf
 				Local editor:TEditor = TEditor.GetInstance()
 				editor.exp_menu.gridSize = paddingValue
 				Hide()
@@ -146,19 +151,20 @@ Type GridSizeWindow
 					EndIf
 					If (paddingValue < 1)
 						paddingValue = 1
-					ElseIf (paddingValue > 1024)
-						paddingValue = 1024
 					EndIf
 					SetGadgetText( txtValue, paddingValue )
 				ElseIf event.source = txtValue
-					If GadgetText( txtValue ) = ""
-						SetGadgetText( txtValue, "1" )
-					ElseIf (paddingValue < 1)
+					If (paddingValue < 1)
 						paddingValue = 1
-					ElseIf (paddingValue > 1024)
-						paddingValue = 1024
 					EndIf
 					SetGadgetText( txtValue, paddingValue )
+					Local editor:TEditor = TEditor.GetInstance()
+					editor.exp_menu.gridSize = paddingValue
+					editor.exp_canvas.Render()
+				ElseIf event.source = okButton
+					Local ev:TEvent = New TEvent
+					ev.id = EVENT_WINDOWCLOSE
+					Self.OnEvent(ev)
 				EndIf
 			Default
 		End Select

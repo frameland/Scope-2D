@@ -99,6 +99,8 @@ Type TEditor
 				Return
 			Default
 		End Select
+		
+		
 		Select event.id
 '--------------------------------------------------------------------------
 ' * Close Window

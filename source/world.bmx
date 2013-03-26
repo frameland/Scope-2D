@@ -248,14 +248,9 @@ Type EditorWorld Extends TWorld
 		Local List:TList = GetRightEntityList()
 		
 		Local entity:TEntity
-		Local grid:Int = 1
-		If editor.exp_menu.gridSwitch
-			grid = editor.exp_menu.gridSize
-		EndIf
 		Local x:Int
 		Local y:Int
-		'  + entity.image.width/2 -> means that it will snap to edges
-		' remove to snap to center
+
 		If ButtonState( editor.exp_options.move_MoveStraight )
 			If Pos( editor.mouse.XDisplacement() ) > Pos( editor.mouse.YDisplacement() )
 				'Move X
@@ -263,11 +258,7 @@ Type EditorWorld Extends TWorld
 					If entity.selection.isSelected
 						x = Int( entity.memory_position.x + editor.mouse.XDisplacement() )
 						y = Int( entity.memory_position.y )
-						If (grid > 1)
-							entity.position.Set( x - (x Mod grid) + entity.size.width/2, y - (y Mod grid) + entity.size.height/2 )
-						Else
-							entity.position.Set( x - (x Mod grid), y - (y Mod grid) )
-						EndIf
+						entity.position.Set(x, y)
 					EndIf
 				Next
 				If editor.exp_toolbar.mode = MODE_COLLISION And entity.name <> ""
@@ -282,11 +273,7 @@ Type EditorWorld Extends TWorld
 					If entity.selection.isSelected
 						x = Int( entity.memory_position.x )
 						y = Int( entity.memory_position.y + editor.mouse.YDisplacement() )
-						If (grid > 1)
-							entity.position.Set( x - (x Mod grid) + entity.size.width/2, y - (y Mod grid) + entity.size.height/2 )
-						Else
-							entity.position.Set( x - (x Mod grid), y - (y Mod grid) )
-						EndIf
+						entity.position.Set(x, y)
 					EndIf
 					If editor.exp_toolbar.mode = MODE_COLLISION And entity.name <> ""
 						Local entityCollision:TEntity = GetEntityById (entity.name)
@@ -303,11 +290,7 @@ Type EditorWorld Extends TWorld
 				If entity.selection.isSelected
 					x = Int( entity.memory_position.x + editor.mouse.XDisplacement() )
 					y = Int( entity.memory_position.y + editor.mouse.YDisplacement() )
-					If (grid > 1)
-						entity.position.Set( x - (x Mod grid) + entity.size.width/2, y - (y Mod grid) + entity.size.height/2 )
-					Else
-						entity.position.Set( x - (x Mod grid), y - (y Mod grid) )
-					EndIf
+					entity.position.Set(x, y)
 					If editor.exp_toolbar.mode = MODE_COLLISION And entity.name <> ""
 						Local entityCollision:TEntity = GetEntityById (entity.name)
 						If entityCollision
@@ -716,7 +699,7 @@ Type EditorWorld Extends TWorld
 		Local camy:Int = cam.position.y * cam.position.z
 		Local startPoint:Int = -width/2 + cam.position.x/gridSize - 1
 		Local endPoint:Int = width/2 + cam.position.x/gridSize + 1
-		SetAlpha 0.15
+		SetAlpha 0.35
 		For i = startPoint To endPoint
 			x = (i*gridSize)*cam.position.z - camx + cam.screen_center_x
 			DrawLine x,0,x,CANVAS_HEIGHT
