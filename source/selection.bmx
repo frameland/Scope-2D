@@ -16,8 +16,12 @@ Type TSelection
 '--------------------------------------------------------------------------
 	Method Init( ent:TEntity )
 		entity = ent
-		radius = (Max( entity.image.width, entity.image.height ) * 0.5)
+		radius = (Max( entity.size.width, entity.size.height ) * 0.5)
 		cam = TEditor.GetInstance().world.cam
+	End Method
+	
+	Method UpdateRadius()
+		radius = Max(entity.size.width, entity.size.height)* 0.5
 	End Method
 
 '--------------------------------------------------------------------------

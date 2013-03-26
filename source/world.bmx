@@ -682,7 +682,7 @@ Type EditorWorld Extends TWorld
 		height:+ 16
 		DrawText("CamZoom:" + FormatedFloat(cam.position.z), 4, height)
 		height:+ 16
-		DrawText ("Sprites: " + EntityList.Count(), 4, height)
+		DrawText ("Sprites: " + renderedSprites, 4, height)
 	End Method
 	
 	Method RenderWorldBorder()

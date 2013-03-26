@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>source/world.bmx</string>
+	<string>source/mouse.bmx</string>
 	<key>documents</key>
 	<array>
 		<dict>
@@ -21,55 +21,54 @@
 	<integer>242</integer>
 	<key>metaData</key>
 	<dict>
-		<key>source/engine/entity.bmx</key>
+		<key>source/mouse.bmx</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>7</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>32</integer>
+				<integer>0</integer>
 			</dict>
-			<key>columnSelection</key>
-			<false/>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>11</integer>
-			<key>selectFrom</key>
+			<integer>34</integer>
+		</dict>
+		<key>source/toolwindows.bmx</key>
+		<dict>
+			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>28</integer>
+				<integer>0</integer>
 				<key>line</key>
-				<integer>32</integer>
+				<integer>0</integer>
 			</dict>
-			<key>selectTo</key>
-			<dict>
-				<key>column</key>
-				<integer>7</integer>
-				<key>line</key>
-				<integer>32</integer>
-			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>0</integer>
 		</dict>
 		<key>source/world.bmx</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>16</integer>
+				<integer>25</integer>
 				<key>line</key>
-				<integer>550</integer>
+				<integer>182</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>0</integer>
+			<integer>122</integer>
 		</dict>
 	</dict>
 	<key>openDocuments</key>
 	<array>
 		<string>source/world.bmx</string>
-		<string>source/engine/entity.bmx</string>
+		<string>source/toolwindows.bmx</string>
+		<string>source/mouse.bmx</string>
 	</array>
 	<key>shellVariables</key>
 	<array>

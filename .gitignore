@@ -3,5 +3,7 @@
 *.app
 *.jpg
 .bmx/
+data/
 *.tmproj
 *.png
+
