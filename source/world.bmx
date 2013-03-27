@@ -566,7 +566,7 @@ Type EditorWorld Extends TWorld
 		End Select
 		RenderWorldBorder()
 		
-		DebugRender( renderedSprites )
+		'DebugRender( renderedSprites )
 	EndMethod
 	
 	Method RenderEditMode:Int()
