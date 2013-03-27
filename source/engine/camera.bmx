@@ -19,6 +19,7 @@ Type TCamera
 	Field screen_center_y:Float
 	
 	Field memory_z:Float = 1.0
+	Field zoomLerping:Byte = False
 	
 '------------------------------------------------------------------------------
 ' Create a new Camera
@@ -52,6 +53,11 @@ Type TCamera
 			Local lerp:Float = 0.15
 			position.x:+ (focus.position.x - position.x) * lerp
 			position.y:+ (focus.position.y - position.y) * lerp
+			If zoomLerping
+				Local canvas:Float = Max(CANVAS_WIDTH, CANVAS_HEIGHT) / 1.2
+				Local world:Float = Max(worldSize.x, worldSize.y)
+				position.z:+ (canvas/world - position.z) * lerp
+			EndIf
 		EndIf
 	EndMethod
 	

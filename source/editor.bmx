@@ -175,6 +175,8 @@ Type TEditor
 					mouse.lastDown = MOUSE_LEFT
 					mouse.SetDown()
 					moveMode = True
+					world.cam.SetFocus(Null)
+					world.cam.zoomLerping = False
 				EndIf
 				world.Update()
 				
@@ -457,6 +459,13 @@ Type TEditor
 	Method UpdateCameraFocus()
 		Local cam:TCamera = world.cam
 		If cam.GetFocus()
+			If cam.GetFocus() = world.centerObject
+				world.centerObject.SetPosition(world.size.x/2, world.size.y/2)
+				If DistanceOfPoints(cam.position.x, cam.position.y, cam.focus.position.x, cam.focus.position.y) < 15
+					cam.SetFocus(Null)
+					cam.zoomLerping = False
+				EndIf
+			EndIf
 			If DistanceOfPoints(cam.position.x, cam.position.y, cam.focus.position.x, cam.focus.position.y) < 15
 				cam.SetFocus(Null)
 			EndIf

@@ -10,6 +10,7 @@ Type EditorWorld Extends TWorld
 	Field gfxChooseWorld:TGraphicChooseWorld
 	Field rect_selection:RectSelection
 	Field size:TPosition 'Size of the World in Pixels
+	Field centerObject:TEntity 'always in the center
 	Field Polys:TList = New TList
 	Field Events:TList = New TList
 	
@@ -24,6 +25,7 @@ Type EditorWorld Extends TWorld
 		gfxChooseWorld = New TGraphicChooseWorld
 		size = New TPosition
 		size.Set (2000,1000)
+		centerObject = New TEntity
 		gfxChooseWorld.Init()
 		SetMaxLayers( STANDARD_LAYERS )
 		
@@ -187,7 +189,7 @@ Type EditorWorld Extends TWorld
 		Local mouseOverEntity:TEntity
 		Local mouse:TGuiMouse = editor.mouse
 		Local highlithed:Int = 0
-		Local distance:Float = 10000
+		Local distance:Float = 1000000
 		
 		If mouse.Dragging
 			If Not rect_selection.started Then
@@ -198,11 +200,12 @@ Type EditorWorld Extends TWorld
 			EndIf
 			rect_selection.Update(  mouse.WorldCoordX(), mouse.WorldCoordY() )
 			For entity = EachIn List
-				If Not IsInView( entity )
-					Continue
-				EndIf
-				If rect_selection.IsInSelection( entity )
+				If IsInView(entity) And rect_selection.IsInSelection( entity )
 					entity.selection.isSelected = True
+				Else
+					If Not mouse.MultiSelect
+						entity.selection.isSelected = False
+					EndIf
 				EndIf
 			Next
 			Return
@@ -220,6 +223,9 @@ Type EditorWorld Extends TWorld
 			EndIf		
 		Next
 		If Not mouseOverEntity
+			If mouse.IsDown() 'Empty area click to deselect
+				TSelection.ClearSelected(List)
+			EndIf
 			editor.exp_options.UpdatePropsUI()
 			Return
 		EndIf
@@ -743,9 +749,8 @@ Type EditorWorld Extends TWorld
 	End Method
 
 	Method ResetView()
-		cam.position.x = 0.0
-		cam.position.y = 0.0
-		cam.position.z = 1.0
+		cam.SetFocus(centerObject)
+		cam.zoomLerping = True
 	End Method
 
 	Method NewScene:Int()

@@ -89,7 +89,7 @@ Type ExpMenu Extends TEditorExpansion
 		CreateMenu( "Select All", M_SELECTALL, edit, KEY_A, MODIFIER_COMMAND )
 		CreateMenu( "Select None", M_SELECTNONE, edit, KEY_D, MODIFIER_COMMAND )
 		'view
-		CreateMenu( "Reset View", M_RESETVIEW, view, KEY_R, MODIFIER_COMMAND  )
+		CreateMenu( "Birds Eye", M_RESETVIEW, view, KEY_R, MODIFIER_COMMAND  )
 		CreateMenu( "", 0, view )
 		view_axis = CreateMenu( "Hide Border", M_XYAXIS, view )
 		view_grid = CreateMenu( "Show Grid", M_SHOWGRID, view )
