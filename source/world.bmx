@@ -1,5 +1,6 @@
 Global GfxWorkingDir:String
 Global MapWorkingDir:String
+Global IsDeveloper:Int
 
 '------------------------------------------------------------------------------
 ' Editing Mode
@@ -35,13 +36,16 @@ Type EditorWorld Extends TWorld
 		DrawRect( 0, 0, canvas.width, canvas.height )
 		Delay 10
 		
+		ResetView()
 	EndMethod
 	
 	Method LoadConfig()
 		Local config:ConfigFile = New ConfigFile
 		config.Load ("source/ressource/config.css")
-		GfxWorkingDir = config.Get ("Config", "gfxdir")
-		MapWorkingDir = config.Get ("Config", "mapdir")
+		Local block:CssBlock = config.GetBlock("Config")
+		GfxWorkingDir = block.Get("gfxdir")
+		MapWorkingDir = block.Get("mapdir")
+		IsDeveloper = block.GetInt("isDev", 0)
 		If (GfxWorkingDir = "") Or (MapWorkingDir = "")
 			AppTitle = "Configuration Error!"
 			Notify ("You first have to set the gfx and map directory.")

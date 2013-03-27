@@ -461,12 +461,13 @@ Type TEditor
 		If cam.GetFocus()
 			If cam.GetFocus() = world.centerObject
 				world.centerObject.SetPosition(world.size.x/2, world.size.y/2)
-				If DistanceOfPoints(cam.position.x, cam.position.y, cam.focus.position.x, cam.focus.position.y) < 15
+				Local canvas:Float = Max(CANVAS_WIDTH, CANVAS_HEIGHT) / 1.2
+				Local world:Float = Max(world.size.x, world.size.y)
+				If DistanceOfPoints(cam.position.x, cam.position.y, cam.focus.position.x, cam.focus.position.y) < 15 And (cam.position.z - (canvas/world) < 0.01)
 					cam.SetFocus(Null)
 					cam.zoomLerping = False
 				EndIf
-			EndIf
-			If DistanceOfPoints(cam.position.x, cam.position.y, cam.focus.position.x, cam.focus.position.y) < 15
+			ElseIf DistanceOfPoints(cam.position.x, cam.position.y, cam.focus.position.x, cam.focus.position.y) < 15
 				cam.SetFocus(Null)
 			EndIf
 		EndIf
