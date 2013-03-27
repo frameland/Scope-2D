@@ -13,7 +13,7 @@ mkdir Scope2DMac/data/graphics
 #copy stuff
 cp -r ~/Developer/Projects/Scope\ 2D/main.app/ Scope2DMac/Scope2D.app
 cp ~/Developer/Projects/Scope\ 2D/versions.txt Scope2DMac/versions.txt
-cp ~/Developer/Projects/Scope\ 2D/README.txt Scope2DMac/README.txt
+cp ~/Developer/Projects/Scope\ 2D/README.md Scope2DMac/README.md
 cp -r ~/Developer/Projects/Scope\ 2D/source/ressource/ Scope2DMac/source/ressource/
 cp -r ~/Developer/Projects/Scope\ 2D/source/ressource/PlanetCute/ Scope2DMac/data/graphics/
 mv -f Scope2DMac/data/graphics/example.css Scope2DMac/data/scenes/
