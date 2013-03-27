@@ -24,7 +24,6 @@ Type TEntity
 	Field active:Int = False
 	Field collision:TCollision
 	Field texturePath:String
-	Field frame:Int = 0
 	
 	'Object Props
 	Field inFront:Byte = False
@@ -93,7 +92,7 @@ Type TEntity
 		.SetColor( color.r, color.g, color.b )
 		.SetBlend( color.blend )
 		DrawImage( image, (position.x * cam.position.z) - (cam.position.x * cam.position.z) + cam.screen_center_x,..
-		(position.y * cam.position.z) - (cam.position.y * cam.position.z) + cam.screen_center_y, frame )
+		(position.y * cam.position.z) - (cam.position.y * cam.position.z) + cam.screen_center_y)
 	EndMethod
 
 
@@ -155,9 +154,6 @@ Type TEntity
 		name = newName
 	End Method
 	
-	Method SetFrame( frame:Int )
-		Self.frame = frame
-	End Method
 
 '------------------------------------------------------------------------------
 ' * Getters

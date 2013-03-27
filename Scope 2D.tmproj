@@ -29,6 +29,7 @@
 				<integer>0</integer>
 				<key>line</key>
 				<integer>0</integer>
+<<<<<<< HEAD
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -43,32 +44,91 @@
 				<integer>0</integer>
 				<key>line</key>
 				<integer>0</integer>
+=======
+>>>>>>> develop
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>source/world.bmx</key>
+		<key>source/editor.bmx</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>23</integer>
+				<key>line</key>
+				<integer>375</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>359</integer>
+		</dict>
+		<key>source/engine/camera.bmx</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
 				<integer>25</integer>
 				<key>line</key>
+<<<<<<< HEAD
 				<integer>182</integer>
+=======
+				<integer>58</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
+			<integer>36</integer>
+		</dict>
+		<key>source/filemanager.bmx</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>1</integer>
+				<key>line</key>
+				<integer>436</integer>
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+			<integer>274</integer>
+		</dict>
+		<key>source/world.bmx</key>
+		<dict>
+			<key>caret</key>
+			<dict>
+				<key>column</key>
+				<integer>3</integer>
+				<key>line</key>
+				<integer>568</integer>
+>>>>>>> develop
+			</dict>
+			<key>firstVisibleColumn</key>
+			<integer>0</integer>
+			<key>firstVisibleLine</key>
+<<<<<<< HEAD
 			<integer>122</integer>
+=======
+			<integer>413</integer>
+>>>>>>> develop
 		</dict>
 	</dict>
 	<key>openDocuments</key>
 	<array>
 		<string>source/world.bmx</string>
+<<<<<<< HEAD
 		<string>source/toolwindows.bmx</string>
 		<string>source/mouse.bmx</string>
+=======
+		<string>source/editor.bmx</string>
+		<string>source/engine/camera.bmx</string>
+		<string>source/filemanager.bmx</string>
+		<string>main.bmx</string>
+>>>>>>> develop
 	</array>
 	<key>shellVariables</key>
 	<array>
@@ -84,6 +144,6 @@
 	<key>showFileHierarchyDrawer</key>
 	<false/>
 	<key>windowFrame</key>
-	<string>{{147, -0}, {970, 878}}</string>
+	<string>{{147, -0}, {1041, 878}}</string>
 </dict>
 </plist>

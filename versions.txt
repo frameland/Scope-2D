@@ -1,21 +1,17 @@
-Alpha 4:
-	- New shortcuts, orientated from Autodek's Maya
-	- New standard save format: css
-	- Now supports creating 'collision rectangles'
-	- Cloning now offsets the dublicated item by 10px in both directions
-	- Overall Improvements
+r5:
+- Most importantly, the file format is now css!
+- In the upper right of the toolbar there are 3 icons now which represent modes:
+	1) Edit Mode
+	2) Collision Mode
+	3) Event Mode
+   You will probably only ever want to use mode 1. The other modes are more for my own needs but maybe you find them useful.
+   In those modes simply right click and you will create a shape.
+- The lower left area in the inspector can be safely ignored for now (again, something for my own needs)
 
-Alpha 3:
-	- Position, Scaling & Rotation can now be set using the keyboard in the inspector
-	- Now supports Fullscreen (OSX only)
-	- Fixed Issue where Scope2D wouldn't open a scene on OSX 10.8
-	- Small overall improvements
-
-Alpha 2:
-  - AutoTools: Use tools without selecting anything before
-  - Enhanced Scene-Properties: Redesigned GUI, Normal Properties added (Menu->Scene->Properties)
-  - World Borders: so you know big your world is
-  - Move selected objects with direction keys by 1 pixel
-
-Alpha:
-  - Initial Release
+Other improvements:
+- You can Middle click drag the whole view instead Cmd-Dragging it.
+- Use S and D keys to quickly decrease/increase the selected entities layer
+- Use F key to immediately focus on the selected entity
+- Use Cmd-R to get a Birds Eye view of your scene
+- You can now click into an empty space to deselect everything, still using Cmd-D is your friend :)
+- Many tiny little detail improvements

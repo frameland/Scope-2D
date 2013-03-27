@@ -1,5 +1,6 @@
 Global GfxWorkingDir:String
 Global MapWorkingDir:String
+Global IsDeveloper:Int
 
 '------------------------------------------------------------------------------
 ' Editing Mode
@@ -10,6 +11,7 @@ Type EditorWorld Extends TWorld
 	Field gfxChooseWorld:TGraphicChooseWorld
 	Field rect_selection:RectSelection
 	Field size:TPosition 'Size of the World in Pixels
+	Field centerObject:TEntity 'always in the center
 	Field Polys:TList = New TList
 	Field Events:TList = New TList
 	
@@ -24,6 +26,7 @@ Type EditorWorld Extends TWorld
 		gfxChooseWorld = New TGraphicChooseWorld
 		size = New TPosition
 		size.Set (2000,1000)
+		centerObject = New TEntity
 		gfxChooseWorld.Init()
 		SetMaxLayers( STANDARD_LAYERS )
 		
@@ -33,13 +36,16 @@ Type EditorWorld Extends TWorld
 		DrawRect( 0, 0, canvas.width, canvas.height )
 		Delay 10
 		
+		ResetView()
 	EndMethod
 	
 	Method LoadConfig()
 		Local config:ConfigFile = New ConfigFile
 		config.Load ("source/ressource/config.css")
-		GfxWorkingDir = config.Get ("Config", "gfxdir")
-		MapWorkingDir = config.Get ("Config", "mapdir")
+		Local block:CssBlock = config.GetBlock("Config")
+		GfxWorkingDir = block.Get("gfxdir")
+		MapWorkingDir = block.Get("mapdir")
+		IsDeveloper = block.GetInt("isDev", 0)
 		If (GfxWorkingDir = "") Or (MapWorkingDir = "")
 			AppTitle = "Configuration Error!"
 			Notify ("You first have to set the gfx and map directory.")
@@ -187,7 +193,7 @@ Type EditorWorld Extends TWorld
 		Local mouseOverEntity:TEntity
 		Local mouse:TGuiMouse = editor.mouse
 		Local highlithed:Int = 0
-		Local distance:Float = 10000
+		Local distance:Float = 1000000
 		
 		If mouse.Dragging
 			If Not rect_selection.started Then
@@ -198,11 +204,12 @@ Type EditorWorld Extends TWorld
 			EndIf
 			rect_selection.Update(  mouse.WorldCoordX(), mouse.WorldCoordY() )
 			For entity = EachIn List
-				If Not IsInView( entity )
-					Continue
-				EndIf
-				If rect_selection.IsInSelection( entity )
+				If IsInView(entity) And rect_selection.IsInSelection( entity )
 					entity.selection.isSelected = True
+				Else
+					If Not mouse.MultiSelect
+						entity.selection.isSelected = False
+					EndIf
 				EndIf
 			Next
 			Return
@@ -220,6 +227,9 @@ Type EditorWorld Extends TWorld
 			EndIf		
 		Next
 		If Not mouseOverEntity
+			If mouse.IsDown() 'Empty area click to deselect
+				TSelection.ClearSelected(List)
+			EndIf
 			editor.exp_options.UpdatePropsUI()
 			Return
 		EndIf
@@ -248,14 +258,9 @@ Type EditorWorld Extends TWorld
 		Local List:TList = GetRightEntityList()
 		
 		Local entity:TEntity
-		Local grid:Int = 1
-		If editor.exp_menu.gridSwitch
-			grid = editor.exp_menu.gridSize
-		EndIf
 		Local x:Int
 		Local y:Int
-		'  + entity.image.width/2 -> means that it will snap to edges
-		' remove to snap to center
+
 		If ButtonState( editor.exp_options.move_MoveStraight )
 			If Pos( editor.mouse.XDisplacement() ) > Pos( editor.mouse.YDisplacement() )
 				'Move X
@@ -263,11 +268,7 @@ Type EditorWorld Extends TWorld
 					If entity.selection.isSelected
 						x = Int( entity.memory_position.x + editor.mouse.XDisplacement() )
 						y = Int( entity.memory_position.y )
-						If (grid > 1)
-							entity.position.Set( x - (x Mod grid) + entity.size.width/2, y - (y Mod grid) + entity.size.height/2 )
-						Else
-							entity.position.Set( x - (x Mod grid), y - (y Mod grid) )
-						EndIf
+						entity.position.Set(x, y)
 					EndIf
 				Next
 				If editor.exp_toolbar.mode = MODE_COLLISION And entity.name <> ""
@@ -282,11 +283,7 @@ Type EditorWorld Extends TWorld
 					If entity.selection.isSelected
 						x = Int( entity.memory_position.x )
 						y = Int( entity.memory_position.y + editor.mouse.YDisplacement() )
-						If (grid > 1)
-							entity.position.Set( x - (x Mod grid) + entity.size.width/2, y - (y Mod grid) + entity.size.height/2 )
-						Else
-							entity.position.Set( x - (x Mod grid), y - (y Mod grid) )
-						EndIf
+						entity.position.Set(x, y)
 					EndIf
 					If editor.exp_toolbar.mode = MODE_COLLISION And entity.name <> ""
 						Local entityCollision:TEntity = GetEntityById (entity.name)
@@ -303,11 +300,7 @@ Type EditorWorld Extends TWorld
 				If entity.selection.isSelected
 					x = Int( entity.memory_position.x + editor.mouse.XDisplacement() )
 					y = Int( entity.memory_position.y + editor.mouse.YDisplacement() )
-					If (grid > 1)
-						entity.position.Set( x - (x Mod grid) + entity.size.width/2, y - (y Mod grid) + entity.size.height/2 )
-					Else
-						entity.position.Set( x - (x Mod grid), y - (y Mod grid) )
-					EndIf
+					entity.position.Set(x, y)
 					If editor.exp_toolbar.mode = MODE_COLLISION And entity.name <> ""
 						Local entityCollision:TEntity = GetEntityById (entity.name)
 						If entityCollision
@@ -432,6 +425,8 @@ Type EditorWorld Extends TWorld
 				dummy = New TEntity
 				dummy.position.Set( entity.position.x + dx, entity.position.y + dy )
 				dummy.scale.Set( entity.scale.sx, entity.scale.sy )
+				dummy.flipH = entity.flipH
+				dummy.flipV = entity.flipV
 				dummy.image = entity.image
 				dummy.texturePath = entity.texturePath
 				dummy.rotation = entity.rotation
@@ -439,11 +434,13 @@ Type EditorWorld Extends TWorld
 				dummy.color.a = entity.color.a
 				dummy.size.Set( entity.size.width, entity.size.height )
 				dummy.collision = entity.collision.GetCopy( dummy )
+				dummy.isParticle = entity.isParticle
+				dummy.isBaseline = entity.isBaseline
+				dummy.allowObjectTriggering = entity.allowObjectTriggering
+				dummy.inFront = entity.inFront
 				dummy.layer = entity.layer
 				dummy.name = entity.name
-				dummy.frame = entity.frame
 				dummy.visible = entity.visible
-				dummy.active = entity.active
 				dummy.selection.Init( dummy )
 				If editor.exp_toolbar.mode = MODE_EDIT
 					AddEntity( dummy )
@@ -569,7 +566,7 @@ Type EditorWorld Extends TWorld
 		End Select
 		RenderWorldBorder()
 		
-		DebugRender( renderedSprites )
+		'DebugRender( renderedSprites )
 	EndMethod
 	
 	Method RenderEditMode:Int()
@@ -689,13 +686,12 @@ Type EditorWorld Extends TWorld
 		If Not editor.exp_menu.xySwitch Then Return
 		ResetDrawing()
 		SetAlpha 1.0
-		SetColor 90,90,90
+		SetColor 120,120,120
 		Local x:Int = cam.screen_center_x - (cam.position.x * cam.position.z)
 		Local y:Int = cam.screen_center_y - (cam.position.y * cam.position.z)
 		Local w:Int = size.x * cam.position.z
 		Local h:Int = size.y * cam.position.z
-		DrawRect2 (x, y, w, h)
-		DrawRect2 (x-3, y-3, w+6, h+6, 2)
+		DrawRect2 (x+1, y+1, w, h)
 	End Method
 	
 	Method RenderGrid()
@@ -712,7 +708,7 @@ Type EditorWorld Extends TWorld
 		Local camy:Int = cam.position.y * cam.position.z
 		Local startPoint:Int = -width/2 + cam.position.x/gridSize - 1
 		Local endPoint:Int = width/2 + cam.position.x/gridSize + 1
-		SetAlpha 0.15
+		SetAlpha 0.35
 		For i = startPoint To endPoint
 			x = (i*gridSize)*cam.position.z - camx + cam.screen_center_x
 			DrawLine x,0,x,CANVAS_HEIGHT
@@ -757,9 +753,8 @@ Type EditorWorld Extends TWorld
 	End Method
 
 	Method ResetView()
-		cam.position.x = 0.0
-		cam.position.y = 0.0
-		cam.position.z = 1.0
+		cam.SetFocus(centerObject)
+		cam.zoomLerping = True
 	End Method
 
 	Method NewScene:Int()
