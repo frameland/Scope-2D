@@ -92,8 +92,8 @@ Type ExpMenu Extends TEditorExpansion
 		CreateMenu( "Reset View", M_RESETVIEW, view, KEY_R, MODIFIER_COMMAND  )
 		CreateMenu( "", 0, view )
 		view_axis = CreateMenu( "Hide Border", M_XYAXIS, view )
-		CreateMenu( "", 0, view )
 		view_grid = CreateMenu( "Show Grid", M_SHOWGRID, view )
+		CreateMenu( "", 0, view )
 		CreateMenu( "Set Grid Size...", M_GRIDSIZE, view )
 		'game
 		'CreateMenu( "Play", M_PLAY, game )

@@ -676,13 +676,12 @@ Type EditorWorld Extends TWorld
 		If Not editor.exp_menu.xySwitch Then Return
 		ResetDrawing()
 		SetAlpha 1.0
-		SetColor 90,90,90
+		SetColor 120,120,120
 		Local x:Int = cam.screen_center_x - (cam.position.x * cam.position.z)
 		Local y:Int = cam.screen_center_y - (cam.position.y * cam.position.z)
 		Local w:Int = size.x * cam.position.z
 		Local h:Int = size.y * cam.position.z
-		DrawRect2 (x, y, w, h)
-		DrawRect2 (x-3, y-3, w+6, h+6, 2)
+		DrawRect2 (x+1, y+1, w, h)
 	End Method
 	
 	Method RenderGrid()

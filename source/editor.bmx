@@ -38,6 +38,7 @@ Type TEditor
 	Field window_sceneProps:ScenePropertyWindow
 	Field zoomMX:Int
 	Field zoomMY:Int
+
 	
 '------------------------------------------------------------------------------	
 '	Info: Create a New Editor Window
@@ -117,6 +118,7 @@ Type TEditor
 			Case EVENT_TIMERTICK
 				ToggleCanvas()
 				world.cam.Update()
+				UpdateCameraFocus()
 				RedrawGadget( exp_canvas.canvas )
 				
 			Case EVENT_GADGETPAINT
@@ -268,10 +270,16 @@ Type TEditor
 					Case KEY_Y, KEY_Z
 						world.Undo()
 					
-					Case KEY_D
+					Case KEY_S
 						world.ChangeEntityLayer (False)
-					Case KEY_F
+					Case KEY_D
 						world.ChangeEntityLayer (True)
+					
+					Case KEY_F
+						Local focus:TEntity = world.GetSelectedEntity()
+						If focus
+							world.cam.SetFocus(focus)
+						EndIf
 					
 					Case KEY_LSHIFT
 						If state <> 1 Then Return
@@ -445,6 +453,16 @@ Type TEditor
 			world.ZoomIn(1+eventData/100.0)
 		EndIf
 	End Method
+	
+	Method UpdateCameraFocus()
+		Local cam:TCamera = world.cam
+		If cam.GetFocus()
+			If DistanceOfPoints(cam.position.x, cam.position.y, cam.focus.position.x, cam.focus.position.y) < 15
+				cam.SetFocus(Null)
+			EndIf
+		EndIf
+	End Method
+	
 	
 '--------------------------------------------------------------------------
 ' * Hook Function so everything happens realtime

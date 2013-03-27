@@ -18,7 +18,6 @@ Type TCamera
 	Field screen_center_x:Float
 	Field screen_center_y:Float
 	
-	Field border:Int
 	Field memory_z:Float = 1.0
 	
 '------------------------------------------------------------------------------
@@ -30,7 +29,6 @@ Type TCamera
 		screen_center_x = CANVAS_WIDTH/2
 		screen_center_y = CANVAS_HEIGHT/2
 		view.Set( CANVAS_WIDTH, CANVAS_HEIGHT )
-		border = 200
 	EndMethod
 	
 '--------------------------------------------------------------------------
@@ -48,27 +46,12 @@ Type TCamera
 '------------------------------------------------------------------------------	
 	Method Update()
 		Local worldSize:TPosition = TEditor.GetInstance().world.size
-		If (position.z < 0.1) Then position.z = 0.1
+		If (position.z < 0.01) Then position.z = 0.01
 		If (position.z > 5) Then position.z = 5
 		If focus
-			position.x = focus.position.x
-			position.y = focus.position.y
-		EndIf
-
-		'Camera will stop at outer borders of world
-		If (position.x > worldSize.x + border)
-			position.x = worldSize.x + border
-		EndIf
-		If (position.y > worldSize.y + border)
-			position.y = worldSize.y + border
-		EndIf
-		
-		'Camera stops before 0,0 border
-		If (position.x < (CANVAS_WIDTH/2.0)/position.z-(border/position.z))
-			position.x = (CANVAS_WIDTH/2.0)/position.z-(border/position.z)
-		EndIf
-		If (position.y < (CANVAS_HEIGHT/2.0)/position.z-(border/position.z))
-			position.y = (CANVAS_HEIGHT/2.0)/position.z-(border/position.z)
+			Local lerp:Float = 0.15
+			position.x:+ (focus.position.x - position.x) * lerp
+			position.y:+ (focus.position.y - position.y) * lerp
 		EndIf
 	EndMethod
 	
