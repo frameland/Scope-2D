@@ -373,7 +373,7 @@ Type TEditor
 			Case EVENT_WINDOWACCEPT
 				Local filepath:String = event.extra.ToString()
 				Local extension:String = ExtractExt( filepath )
-				If extension = "xml"
+				If extension = "css"
 					SceneFile.Instance().Open( filepath )
 				EndIf
 				
