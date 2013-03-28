@@ -255,6 +255,7 @@ Type TEditor
 						If exp_menu.ParallaxingActive
 							world.useParallaxKey = event.data
 							world.pressingParallaxKey = True
+							world.parallaxSpeed = 3
 						Else
 							world.ProcessPixelMoving (event.data)
 						EndIf
@@ -471,12 +472,12 @@ Type TEditor
 	Method UpdateCamera()
 		UpdateCameraFocus()
 		If world.pressingParallaxKey
-			world.parallaxSpeed:+world.size.x/2000.0
+			world.parallaxSpeed:+ world.size.x/2000
 			world.parallaxSpeed = Min(world.size.x/200.0, world.parallaxSpeed)
 			world.UpdateParallaxView()
 		Else
 			If world.parallaxSpeed > 0.1
-				world.parallaxSpeed:* 0.95
+				world.parallaxSpeed:* 0.9
 				world.UpdateParallaxView()
 			Else
 				world.parallaxSpeed = 0
