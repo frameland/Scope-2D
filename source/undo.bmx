@@ -49,6 +49,7 @@ Type TWorldState
 			dummy.name = entity.name
 			dummy.visible = entity.visible
 			dummy.inFront = entity.inFront
+			dummy.parallax = entity.parallax
 			dummy.selection.Init( dummy )
 			dummy.selection.isOverlapping = entity.selection.isOverlapping
 			dummy.selection.isSelected = entity.selection.isSelected

@@ -17,6 +17,8 @@ Type ExpOptions Extends TEditorExpansion
 	Field prop_Layer:TGadget
 	Field prop_LayerNumber:TGadget
 	Field labelLayer:TGadget
+	Field prop_Parallax:TGadget
+	Field label_ParallaxNumber:TGadget
 	Field prop_Red:TGadget
 	Field prop_Green:TGadget
 	Field prop_Blue:TGadget
@@ -44,10 +46,10 @@ Type ExpOptions Extends TEditorExpansion
 ' * Init Gadgets
 '--------------------------------------------------------------------------
 	Method Init( editor:TEditor )
-		panel:TGadget = CreatePanel( CANVAS_WIDTH,0,200,33,editor.window )
+		panel:TGadget = CreatePanel( CANVAS_WIDTH,0,SIDEBAR_WIDTH,33,editor.window )
 		SetGadgetLayout panel,0,1,1,0
 		SetGadgetColor( panel, 210,210,210 )
-		panelProps = CreatePanel( CANVAS_WIDTH,33,200,500,editor.window )
+		panelProps = CreatePanel( CANVAS_WIDTH,33,SIDEBAR_WIDTH,500,editor.window )
 		SetGadgetLayout panelProps,0,1,1,0
 		
 		'Local labelOption:TGadget = CreateLabel( "Option",12,8,48,18,panel )
@@ -92,25 +94,41 @@ Type ExpOptions Extends TEditorExpansion
 		
 		Local labelName:TGadget = CreateLabel( "Name",12,12,40,18,panelProps, LABEL_RIGHT )
 		prop_Name:TGadget = CreateTextField( 61,9,121,20,panelProps,0 )
-		labelLayer = CreateLabel( "Layer",12,41,40,18,panelProps, LABEL_RIGHT)
-		prop_Layer:TGadget = CreateSlider( 60,39,106,20,panelProps, 5)
-		SetSliderRange( prop_Layer, 1, STANDARD_LAYERS)
-		SetSliderValue( prop_Layer, 1 )
-		prop_LayerNumber = CreateLabel (STANDARD_LAYERS/2, 164, prop_Layer.ypos, 20, 20, panelProps, 8)
-		SetGadgetSensitivity( labelLayer, SENSITIZE_MOUSE )
-		Local sep2:TGadget = CreateLabel( "",0,67,panelProps.ClientWidth(),1,panelProps,3 )
 		
-		labelRed:TGadget = CreateLabel( "Red",12,78,40,18,panelProps,LABEL_RIGHT )
-		labelGreen:TGadget = CreateLabel( "Green",12,106,40,18,panelProps,LABEL_RIGHT )
-		labelBlue:TGadget = CreateLabel( "Blue",12,134,40,18,panelProps,LABEL_RIGHT )
-		Local labelAlpha:TGadget = CreateLabel( "Alpha",12,162,40,18,panelProps, LABEL_RIGHT )
+		labelLayer = CreateLabel( "Layer",12,41,40,18,panelProps, LABEL_RIGHT)
+		prop_Layer = CreateSlider( 60,39,122,20,panelProps, 5)
+		SetSliderRange( prop_Layer, 1, STANDARD_LAYERS)
+		SetSliderValue( prop_Layer, STANDARD_LAYERS/2 )
+		prop_LayerNumber = CreateLabel (STANDARD_LAYERS/2, 184, prop_Layer.ypos+2, 36, 20, panelProps, LABEL_LEFT)
+		SetGadgetSensitivity( labelLayer, SENSITIZE_MOUSE )
+		
+		Local yAdd:Int = 41 + 28
+		Local labelParallax:TGadget = CreateLabel("Parallax", 0, yAdd, 52, 19, panelProps, LABEL_RIGHT)
+		prop_Parallax = CreateSlider( 60,yAdd-2,122,20,panelProps, 5)
+		SetSliderRange(prop_Parallax, 0, 200)
+		SetSliderValue(prop_Parallax, 0)
+		label_ParallaxNumber = CreateLabel ("0", 184, prop_Parallax.ypos+2, 36, 20, panelProps, LABEL_LEFT)
+		yAdd:+28
+		
+		labelRed:TGadget = CreateLabel( "Red",12,yAdd,40,18,panelProps,LABEL_RIGHT )
+		prop_Red:TGadget = CreateSlider( 60,yAdd-2,122,20,panelProps,5 )
+		yAdd:+28
+		
+		labelGreen:TGadget = CreateLabel( "Green",12,yAdd,40,18,panelProps,LABEL_RIGHT )
+		prop_Green:TGadget = CreateSlider( 60,yAdd-2,122,20,panelProps,5 )
+		yAdd:+28
+		
+		labelBlue:TGadget = CreateLabel( "Blue",12,yAdd,40,18,panelProps,LABEL_RIGHT )
+		prop_Blue:TGadget = CreateSlider( 60,yAdd-2,122,20,panelProps,5 )
+		yAdd:+28
+		
+		Local labelAlpha:TGadget = CreateLabel( "Alpha",12,yAdd,40,18,panelProps, LABEL_RIGHT )
+		prop_Alpha:TGadget = CreateSlider( 60,yAdd-2,122,20,panelProps,5 )
+		yAdd:+28
+		
 		SetGadgetSensitivity( labelRed, SENSITIZE_MOUSE )
 		SetGadgetSensitivity( labelGreen, SENSITIZE_MOUSE )
 		SetGadgetSensitivity( labelBlue, SENSITIZE_MOUSE )
-		prop_Red:TGadget = CreateSlider( 60,76,122,20,panelProps,5 )
-		prop_Green:TGadget = CreateSlider( 60,104,122,20,panelProps,5 )
-		prop_Blue:TGadget = CreateSlider( 60,132,122,20,panelProps,5 )
-		prop_Alpha:TGadget = CreateSlider( 60,160,122,20,panelProps,5 )
 		SetSliderRange( prop_Red, 0, 255 )
 		SetSliderValue( prop_Red, 255 )
 		SetSliderRange( prop_Green, 0, 255 )
@@ -119,30 +137,43 @@ Type ExpOptions Extends TEditorExpansion
 		SetSliderValue( prop_Blue, 255 )
 		SetSliderRange( prop_Alpha, 0, 100 )
 		SetSliderValue( prop_Alpha, 100 )
-		Local sep3:TGadget = CreateLabel( "",0,188,panelProps.ClientWidth(),1,panelProps,3 )
+		Local sep3:TGadget = CreateLabel( "",0,yAdd,panelProps.ClientWidth(),1,panelProps,3 )
+		yAdd:+12
 		
-		Local labelX:TGadget = CreateLabel( "X",14,198+20,80,18,panelProps,LABEL_CENTER )
-		Local labelY:TGadget = CreateLabel( "Y",102,198+20,80,18,panelProps,LABEL_CENTER )
-		prop_X = CreateTextField( 14+15,197,50,20,panelProps,0 )
-		prop_Y = CreateTextField( 102+15,197,50,20,panelProps,0 )
-		Local labelScaleX:TGadget = CreateLabel( "ScaleX",14,241+20,80,18,panelProps,LABEL_CENTER )
-		Local labelScaleY:TGadget = CreateLabel( "ScaleY",102,241+20,80,18,panelProps,LABEL_CENTER )
-		prop_ScaleX = CreateTextField( 14+15,240,50,20,panelProps,0 )
-		prop_ScaleY = CreateTextField( 102+15,240,50,20,panelProps,0 )
-		Local labelRotation:TGadget = CreateLabel( "Rotation",12,284+20,80,18,panelProps, LABEL_CENTER)
-		prop_Rotation = CreateTextField( 14+15,283,50,20,panelProps,0 )
-		Local sep4:TGadget = CreateLabel( "",0,324,panelProps.ClientWidth(),1,panelProps,3 )
+		Local labelX:TGadget = CreateLabel( "X",14,yAdd+20,80,18,panelProps,LABEL_CENTER )
+		Local labelY:TGadget = CreateLabel( "Y",102,yAdd+20,80,18,panelProps,LABEL_CENTER )
+		prop_X = CreateTextField( 14+15,yAdd,50,20,panelProps,0 )
+		prop_Y = CreateTextField( 102+15,yAdd,50,20,panelProps,0 )
+		yAdd:+42
 		
-		propIsFrontSprite = CreateButton ("In Front", 29, 336, 130, 16, panelProps, BUTTON_CHECKBOX)
-		objectTriggering = CreateButton ("Object-Triggering", 29, 364, 150, 16, panelProps, BUTTON_CHECKBOX)
+		Local labelScaleX:TGadget = CreateLabel( "ScaleX",14,yAdd+20,80,18,panelProps,LABEL_CENTER )
+		Local labelScaleY:TGadget = CreateLabel( "ScaleY",102,yAdd+20,80,18,panelProps,LABEL_CENTER )
+		prop_ScaleX = CreateTextField( 14+15,yAdd,50,20,panelProps,0 )
+		prop_ScaleY = CreateTextField( 102+15,yAdd,50,20,panelProps,0 )
+		yAdd:+42
+		
+		Local labelRotation:TGadget = CreateLabel( "Rotation",12,yAdd+20,80,18,panelProps, LABEL_CENTER)
+		prop_Rotation = CreateTextField( 14+15,yAdd,50,20,panelProps,0 )
+		yAdd:+42
+		
+		Local sep4:TGadget = CreateLabel( "",0,yAdd,panelProps.ClientWidth(),1,panelProps,3 )
+		yAdd:+12
+		
+		propIsFrontSprite = CreateButton ("In Front", 29, yAdd, 130, 16, panelProps, BUTTON_CHECKBOX)
+		yAdd:+28
+		objectTriggering = CreateButton ("Object-Triggering", 29, yAdd, 150, 16, panelProps, BUTTON_CHECKBOX)
 		HideGadget objectTriggering
-		openScriptButtonEnter = CreateButton ("OnEnter Script", 26, 396, 140, 24, panelProps)
-		openScriptButtonAction = CreateButton ("OnAction Script", 26, 428, 140, 24, panelProps)
+		yAdd:+28
+		openScriptButtonEnter = CreateButton ("OnEnter Script", 26, yAdd, 140, 24, panelProps)
+		yAdd:+28
+		openScriptButtonAction = CreateButton ("OnAction Script", 26, yAdd, 140, 24, panelProps)
 		
-		okButton = CreateButton ("",205,0,40,24,panelProps, BUTTON_OK)
+		okButton = CreateButton ("",SIDEBAR_WIDTH + 5,0,40,24,panelProps, BUTTON_OK)
 		
 		SetGadgetFont (labelName, titleFont)
 		SetGadgetFont (labelLayer, titleFont)
+		SetGadgetFont (labelParallax, titleFont)
+		SetGadgetFont (label_ParallaxNumber, normalFont)
 		SetGadgetFont (labelRed, titleFont)
 		SetGadgetFont (labelGreen, titleFont)
 		SetGadgetFont (labelBlue, titleFont)
@@ -233,11 +264,14 @@ Type ExpOptions Extends TEditorExpansion
 				EnableGadget prop_Green
 				EnableGadget prop_Blue
 				EnableGadget prop_Layer
+				EnableGadget prop_Parallax
 				EnableGadget propIsFrontSprite
 				entity = editor.world.GetSelectedEntity()
 				SetGadgetText( prop_Name, entity.name )
 				SetSliderValue( prop_Layer, entity.layer )
 				SetGadgetText (prop_LayerNumber, entity.layer)
+				SetSliderValue( prop_Parallax, entity.parallax + 100)
+				SetGadgetText (label_ParallaxNumber, entity.parallax)
 				SetSliderValue( prop_Red, entity.color.r )
 				SetSliderValue( prop_Green, entity.color.g )
 				SetSliderValue( prop_Blue, entity.color.b )
@@ -249,6 +283,7 @@ Type ExpOptions Extends TEditorExpansion
 				DisableGadget prop_Green
 				DisableGadget prop_Blue
 				DisableGadget prop_Layer
+				DisableGadget prop_Parallax
 				entity = editor.world.GetSelectedEntity()
 				EnableGadget prop_Name
 				SetGadgetText( prop_Name, entity.name)
@@ -259,6 +294,7 @@ Type ExpOptions Extends TEditorExpansion
 				DisableGadget prop_Green
 				DisableGadget prop_Blue
 				DisableGadget prop_Layer
+				DisableGadget prop_Parallax
 				entity = editor.world.GetSelectedEntity()
 				EnableGadget prop_Name
 				SetGadgetText( prop_Name, entity.name)
@@ -282,6 +318,9 @@ Type ExpOptions Extends TEditorExpansion
 				SetGadgetText( prop_Name, "..." )
 				DisableGadget prop_Name
 				SetSliderValue( prop_Layer, 1 )
+				SetGadgetText (prop_LayerNumber, 1)
+				SetSliderValue( prop_Parallax, 0)
+				SetGadgetText (label_ParallaxNumber, 0)
 				SetSliderValue( prop_Alpha, 100 )
 			ElseIf editor.exp_toolbar.mode = MODE_COLLISION
 				DisableGadget panelProps
@@ -361,6 +400,31 @@ Type ExpOptions Extends TEditorExpansion
 			Next
 		EndIf
 		RedrawGadget( editor.window )
+	End Method
+
+	Method SetParallax()
+		Local editor:TEditor = TEditor.GetInstance()
+		'editor.world.SaveState()
+		Local selected:Int = editor.world.NrOfSelectedEntities()
+		
+		'Constrain to multiples of 5
+		Local set_Parallax:Int = Int( SliderValue(prop_Parallax) )
+		set_Parallax = (set_Parallax / 5) * 5
+		set_Parallax = set_Parallax - 100
+		SetSliderValue(prop_Parallax, set_Parallax + 100)
+		
+		SetGadgetText( label_ParallaxNumber, set_Parallax )
+		Local entity:TEntity
+		If selected = 1
+			editor.world.GetSelectedEntity().SetParallax( set_Parallax )
+		ElseIf selected > 1
+			For entity = EachIn editor.world.EntityList
+				If entity.selection.isSelected Then
+					entity.SetParallax( set_Parallax )
+				EndIf
+			Next
+		EndIf
+		RedrawGadget( editor.window )	
 	End Method
 	
 	Method SetAlpha()

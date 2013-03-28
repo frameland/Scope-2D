@@ -12,6 +12,7 @@ Type ExpMenu Extends TEditorExpansion
 	Field help:TGadget
 	
 	Field view_grid:TGadget
+	Field view_parallax:TGadget
 	Field view_axis:TGadget
 	
 	Const M_FILE:Int = 1
@@ -42,6 +43,7 @@ Type ExpMenu Extends TEditorExpansion
 	Const M_SHOWGRID:Int = 32
 	Const M_GRIDSIZE:Int = 34
 	Const M_XYAXIS:Int = 33
+	Const M_PARALLAX:Int = 34
 	
 	Const M_PLAY:Int = 51
 	Const M_SCRIPTING:Int = 52
@@ -52,6 +54,7 @@ Type ExpMenu Extends TEditorExpansion
 	
 	Field gridSize:Int = 64
 	Field gridSwitch:Byte = False
+	Field ParallaxingActive:Byte = False
 	Field xySwitch:Byte = True
 	
 '--------------------------------------------------------------------------
@@ -90,6 +93,7 @@ Type ExpMenu Extends TEditorExpansion
 		CreateMenu( "Select None", M_SELECTNONE, edit, KEY_D, MODIFIER_COMMAND )
 		'view
 		CreateMenu( "Birds Eye", M_RESETVIEW, view, KEY_R, MODIFIER_COMMAND  )
+		view_parallax = CreateMenu( "Show Parallaxing", M_PARALLAX, view, KEY_P, MODIFIER_COMMAND)
 		CreateMenu( "", 0, view )
 		view_axis = CreateMenu( "Hide Border", M_XYAXIS, view )
 		view_grid = CreateMenu( "Show Grid", M_SHOWGRID, view )
@@ -171,6 +175,15 @@ Type ExpMenu Extends TEditorExpansion
 			Case M_RESETVIEW
 				editor.world.ResetView()
 				RedrawGadget( editor.window )
+			Case M_PARALLAX
+				If ParallaxingActive
+					ParallaxingActive = False
+					SetGadgetText( view_parallax, "Show Parallaxing" )
+				Else
+					ParallaxingActive = True
+					SetGadgetText( view_parallax, "Hide Parallaxing" )
+				EndIf
+				UpdateWindowMenu( editor.window )
 			Case M_XYAXIS
 				If xySwitch = False
 					xySwitch = True
