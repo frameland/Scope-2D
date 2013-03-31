@@ -41,9 +41,10 @@ Type ExpMenu Extends TEditorExpansion
 	
 	Const M_RESETVIEW:Int = 31
 	Const M_SHOWGRID:Int = 32
-	Const M_GRIDSIZE:Int = 34
 	Const M_XYAXIS:Int = 33
-	Const M_PARALLAX:Int = 34
+	Const M_GRIDSIZE:Int = 34
+	Const M_PARALLAX:Int = 36
+	Const M_BGCOLOR:Int = 37
 	
 	Const M_PLAY:Int = 51
 	Const M_SCRIPTING:Int = 52
@@ -56,6 +57,7 @@ Type ExpMenu Extends TEditorExpansion
 	Field gridSwitch:Byte = False
 	Field ParallaxingActive:Byte = False
 	Field xySwitch:Byte = True
+	Field bgColorId:Int = 0
 	
 '--------------------------------------------------------------------------
 ' * Initialize menu
@@ -97,6 +99,7 @@ Type ExpMenu Extends TEditorExpansion
 		CreateMenu( "", 0, view )
 		view_axis = CreateMenu( "Hide Border", M_XYAXIS, view )
 		view_grid = CreateMenu( "Show Grid", M_SHOWGRID, view )
+		CreateMenu("Toggle Background Color", M_BGCOLOR, view)
 		CreateMenu( "", 0, view )
 		CreateMenu( "Set Grid Size...", M_GRIDSIZE, view )
 		'game
@@ -206,7 +209,8 @@ Type ExpMenu Extends TEditorExpansion
 				RedrawGadget( editor.window )
 			Case M_GRIDSIZE
 				editor.window_gridSize.Show()
-				
+			Case M_BGCOLOR
+				ChangeBgColor()
 			'help
 			Case M_ABOUT
 				editor.window_about.Show()
@@ -233,4 +237,18 @@ Type ExpMenu Extends TEditorExpansion
 		UpdateWindowMenu( editor.window )
 	End Method	
 	
+	Method ChangeBgColor()
+		bgColorId:+1
+		If bgColorId > 1
+			bgColorId = 0
+		EndIf
+		Select bgColorId
+			Case 0
+				SetClsColor(250, 250, 250)
+			Case 1
+				SetClsColor(127, 127, 127)
+			Default
+				Assert(False)
+		End Select
+	End Method
 End Type
