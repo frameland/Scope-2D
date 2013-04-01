@@ -731,6 +731,16 @@ Type CssBlock
 		Return Properties.Contains (propName)
 	End Method
 	
+	Method ToString:String()
+		Local buffer:String = id + "{"
+		Local text:String
+		For text = EachIn Properties.Keys()
+			buffer = buffer + text + ":" + String(Properties.ValueForKey(text)) + ";"
+		Next
+		buffer = buffer + "}"
+		Return buffer
+	End Method
+	
 EndType
 
 

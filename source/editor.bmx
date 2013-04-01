@@ -75,6 +75,11 @@ Type TEditor
 		window_gridSize = New GridSizeWindow
 		window_sceneProps = New ScenePropertyWindow
 		ShowGadget( window )
+		
+		'Last Opened
+		If world.shouldOpenAutomatically <> ""
+			SceneFile.Instance().Open(world.shouldOpenAutomatically)
+		EndIf
 	EndMethod
 	
 	
@@ -548,8 +553,19 @@ Type TEditor
 		AppTitle = "Quit Scope2D?"
 		If Proceed("All unsaved progress will be lost") = 1
 			Self.is_ending = True
+			SaveLastOpened()
 		EndIf
 	EndMethod
+	
+	Method SaveLastOpened()
+		Local config:ConfigFile = New ConfigFile
+		config.Load ("source/ressource/config.css")
+		Local block:CssBlock = config.GetBlock("Config")
+		block.SetKeyAndValue("LastOpen", SceneFile.Instance().currentlyOpened)
+		Local stream:TStream = WriteStream("source/ressource/config.css")
+		stream.WriteString(block.ToString())
+		stream.Close()
+	End Method
 	
 	
 '------------------------------------------------------------------------------	

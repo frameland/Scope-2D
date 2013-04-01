@@ -19,6 +19,8 @@ Type EditorWorld Extends TWorld
 	Field parallaxSpeed:Float
 	Field pressingParallaxKey:Byte = False
 	
+	Field shouldOpenAutomatically:String
+	
 '------------------------------------------------------------------------------
 ' Initialize the World
 '------------------------------------------------------------------------------	
@@ -55,6 +57,13 @@ Type EditorWorld Extends TWorld
 			Notify ("You first have to set the gfx and map directory.")
 			OpenUrl ("source/ressource/config.css")
 			End
+		EndIf
+		If block.Contains("LastOpen")
+			shouldOpenAutomatically = ""
+			Local lastOpened:String = block.Get("LastOpen")
+			If FileType(lastOpened) = 1
+				shouldOpenAutomatically = lastOpened
+			EndIf
 		EndIf
 	End Method
 	

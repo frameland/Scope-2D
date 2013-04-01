@@ -4,8 +4,8 @@ Rem
 	* chaos.desktopext
 EndRem
 
-'buildopt: release
 'buildopt: gui
+'buildopt: release
 'buildopt: execute
 SuperStrict
 
