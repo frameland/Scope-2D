@@ -1,4 +1,4 @@
-General{Width:1600;Height:800;Layers:20;Sprites:83;SpritesFront:0;Polys:1;Baselines:0;Triggers:0;Particles:0;Savepoints:0;}
+General{Width:1600;Height:800;Layers:20;Sprites:82;SpritesFront:1;Polys:1;Baselines:0;Triggers:0;Particles:0;Savepoints:0;}
 Properties{atlas:texture.png;bg:Mountain.png;slidingTime:1500;touchTime:500;}
 sprite1{x:946;y:755;scalex:2.65;scaley:1.50;layer:2;image:Snow.png;}
 sprite2{x:545;y:197;scalex:0.20;scaley:0.20;alpha:0.87;parallax:40;layer:3;image:Tree.png;}
@@ -7,7 +7,7 @@ sprite4{x:745;y:177;scalex:0.20;scaley:0.20;alpha:0.87;parallax:40;layer:3;image
 sprite5{x:1230;y:696;scalex:2.66;scaley:2.66;layer:3;image:Snow.png;}
 sprite6{x:1264;y:727;scalex:2.66;scaley:2.66;layer:3;image:Snow.png;}
 sprite7{x:1288;y:524;scalex:2.66;scaley:2.66;layer:3;image:Snow.png;}
-sprite8{x:978;y:561;scalex:2.85;scaley:2.85;layer:3;image:Snow.png;}
+sprite8{x:978;y:561;scalex:2.84;scaley:2.84;layer:3;image:Snow.png;}
 sprite9{x:1505;y:505;scalex:2.66;scaley:2.66;layer:3;image:Snow.png;}
 sprite10{x:143;y:207;scalex:0.46;scaley:0.46;alpha:0.87;parallax:30;layer:4;image:Tree.png;}
 sprite11{x:602;y:250;scalex:0.46;scaley:0.46;alpha:0.87;parallax:20;layer:4;image:Tree.png;}
@@ -48,13 +48,13 @@ sprite45{x:188;y:565;scalex:1.19;scaley:1.19;layer:7;image:Hoodiestone5.png;}
 sprite46{x:167;y:670;scalex:1.19;scaley:1.19;layer:7;image:Hoodiestone5.png;}
 sprite47{x:79;y:561;scalex:1.10;scaley:1.10;layer:7;image:Hoodiestone5.png;}
 sprite48{x:705;y:516;layer:8;image:Hoodieice.png;}
-sprite49{x:607;y:790;scalex:1.00;scaley:1.00;layer:8;image:Hoodiestone5.png;}
-sprite50{x:501;y:771;scalex:1.00;scaley:1.00;layer:8;image:Hoodiestone5.png;}
-sprite51{x:343;y:783;scalex:1.00;scaley:1.00;layer:8;image:Hoodiestone5.png;}
-sprite52{x:124;y:773;scalex:1.00;scaley:1.00;layer:8;image:Hoodiestone5.png;}
+sprite49{x:607;y:790;layer:8;image:Hoodiestone5.png;}
+sprite50{x:501;y:771;layer:8;image:Hoodiestone5.png;}
+sprite51{x:343;y:783;layer:8;image:Hoodiestone5.png;}
+sprite52{x:124;y:773;layer:8;image:Hoodiestone5.png;}
 sprite53{x:1500;y:368;scalex:2.50;scaley:2.50;rotation:-2.50;layer:8;image:Snow5.png;}
-sprite54{x:1117;y:376;scalex:2.02;scaley:2.02;rotation:-8.60;layer:8;image:Snow5.png;}
-sprite55{x:1313;y:366;scalex:2.27;scaley:2.27;rotation:-8.60;layer:8;image:Snow5.png;}
+sprite54{x:1117;y:376;scalex:2.01;scaley:2.01;rotation:-8.60;layer:8;image:Snow5.png;}
+sprite55{x:1313;y:366;scalex:2.26;scaley:2.26;rotation:-8.60;layer:8;image:Snow5.png;}
 sprite56{x:1022;y:224;layer:8;image:Tree.png;}
 sprite57{x:1519;y:436;layer:9;image:Tribune.png;}
 sprite58{x:1575;y:441;layer:9;image:Hoodiefemale.png;}
@@ -70,7 +70,7 @@ sprite67{x:1191;y:419;layer:10;image:Hoodiefemale.png;}
 sprite68{x:1441;y:382;layer:10;image:Tree.png;}
 sprite69{x:1274;y:323;layer:10;image:Hoodiefemale.png;}
 sprite70{x:1460;y:757;scalex:1.38;scaley:1.38;flipX:1;parallax:-30;layer:10;image:Hoodiefemale2.png;}
-sprite71{x:1540;y:757;scalex:1.26;scaley:1.26;blue:186;flipX:1;parallax:-30;layer:10;image:Hoodiefemale2.png;}
+sprite71{x:1540;y:757;scalex:1.25;scaley:1.25;blue:186;flipX:1;parallax:-30;layer:10;image:Hoodiefemale2.png;}
 sprite72{x:11;y:587;scalex:1.07;scaley:1.07;layer:11;image:Hoodiestone5.png;}
 sprite73{x:33;y:684;layer:12;image:Hoodiestone5.png;}
 sprite74{x:629;y:520;layer:14;image:Hoodieice2.png;}
@@ -79,8 +79,8 @@ sprite76{x:484;y:515;layer:16;image:Hoodieice.png;}
 sprite77{x:407;y:520;layer:17;image:Hoodieice2.png;}
 sprite78{x:335;y:516;layer:17;image:Hoodieice.png;}
 sprite79{x:258;y:516;layer:18;image:Hoodieice.png;}
-sprite80{x:1277;y:634;scalex:1.25;scaley:1.25;parallax:-30;layer:18;image:Tree.png;}
-sprite81{x:183;y:521;layer:19;image:Hoodieice2.png;}
-sprite82{x:36;y:517;layer:20;image:Hoodieice.png;}
-sprite83{x:112;y:517;layer:20;image:Hoodieice.png;}
+sprite80{x:183;y:521;layer:19;image:Hoodieice2.png;}
+sprite81{x:36;y:517;layer:20;image:Hoodieice.png;}
+sprite82{x:112;y:517;layer:20;image:Hoodieice.png;}
+spriteF1{x:1277;y:634;scalex:1.25;scaley:1.25;parallax:-30;layer:18;image:Tree.png;}
 poly1{data:78,522,825,522,78,571,825,571;}

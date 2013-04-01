@@ -58,7 +58,7 @@ Type SceneFile
 		If Not TEditor.GetInstance().world.NewScene()
 			Return False
 		EndIf
-		
+
 		Local general:CssBlock = file.GetBlock ("General")
 		If Not general
 			AppTitle = "Couldn't load map " + path + "."
@@ -80,10 +80,10 @@ Type SceneFile
 		
 		Local block:CssBlock
 		For block = EachIn file.Blocks.Values()
-			If block.id.StartsWith ("sprite")
-				CreateSpriteCss (block)
-			ElseIf block.id.StartsWith ("spriteF")
+			If block.id.StartsWith ("spriteF")
 				CreateSpriteCss (block, True)
+			ElseIf block.id.StartsWith ("sprite")
+				CreateSpriteCss (block)
 			ElseIf block.id.StartsWith ("poly")
 				CreatePolyCss (block)
 			ElseIf block.id.StartsWith ("baseline")
