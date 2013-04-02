@@ -46,6 +46,14 @@ Type EditorWorld Extends TWorld
 	EndMethod
 	
 	Method LoadConfig()
+		Const configPath:String = "source/ressource/config.css"
+
+		If Not FileType(configPath)
+			Local stream:TStream = WriteStream(configPath)
+			stream.WriteString("Config {~n~tgfxdir:;~n~tmapdir:;~n}~n")
+			stream.Close()
+		EndIf
+		
 		Local config:ConfigFile = New ConfigFile
 		config.Load ("source/ressource/config.css")
 		Local block:CssBlock = config.GetBlock("Config")
@@ -53,8 +61,8 @@ Type EditorWorld Extends TWorld
 		MapWorkingDir = block.Get("mapdir")
 		IsDeveloper = block.GetInt("isDev", 0)
 		If (GfxWorkingDir = "") Or (MapWorkingDir = "")
-			AppTitle = "Configuration Error!"
-			Notify ("You first have to set the gfx and map directory.")
+			AppTitle = "Folder Setup"
+			Notify ("Scope2D wants to know where your graphics and scenes are located. Type the path to these in the gfxdir and mapdir properties.")
 			OpenUrl ("source/ressource/config.css")
 			End
 		EndIf

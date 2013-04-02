@@ -732,12 +732,18 @@ Type CssBlock
 	End Method
 	
 	Method ToString:String()
+		Local lineBreak:Byte = True
 		Local buffer:String = id + "{"
 		Local text:String
 		For text = EachIn Properties.Keys()
-			buffer = buffer + text + ":" + String(Properties.ValueForKey(text)) + ";"
+			If lineBreak
+				buffer:+ "~n~t" + text + ":" + String(Properties.ValueForKey(text)) + ";"
+			Else
+				buffer = buffer + text + ":" + String(Properties.ValueForKey(text)) + ";"
+			EndIf
 		Next
-		buffer = buffer + "}"
+		If lineBreak Then buffer:+"~n"
+		buffer = buffer + "}~n"
 		Return buffer
 	End Method
 	
