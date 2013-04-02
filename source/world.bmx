@@ -15,6 +15,12 @@ Type EditorWorld Extends TWorld
 	Field Polys:TList = New TList
 	Field Events:TList = New TList
 	
+	Field useParallaxKey:Byte = 0
+	Field parallaxSpeed:Float
+	Field pressingParallaxKey:Byte = False
+	
+	Field shouldOpenAutomatically:String
+	
 '------------------------------------------------------------------------------
 ' Initialize the World
 '------------------------------------------------------------------------------	
@@ -40,6 +46,14 @@ Type EditorWorld Extends TWorld
 	EndMethod
 	
 	Method LoadConfig()
+		Const configPath:String = "source/ressource/config.css"
+
+		If Not FileType(configPath)
+			Local stream:TStream = WriteStream(configPath)
+			stream.WriteString("Config {~n~tgfxdir:;~n~tmapdir:;~n}~n")
+			stream.Close()
+		EndIf
+		
 		Local config:ConfigFile = New ConfigFile
 		config.Load ("source/ressource/config.css")
 		Local block:CssBlock = config.GetBlock("Config")
@@ -47,10 +61,17 @@ Type EditorWorld Extends TWorld
 		MapWorkingDir = block.Get("mapdir")
 		IsDeveloper = block.GetInt("isDev", 0)
 		If (GfxWorkingDir = "") Or (MapWorkingDir = "")
-			AppTitle = "Configuration Error!"
-			Notify ("You first have to set the gfx and map directory.")
+			AppTitle = "Folder Setup"
+			Notify ("Scope2D wants to know where your graphics and scenes are located. Type the path to these in the gfxdir and mapdir properties.")
 			OpenUrl ("source/ressource/config.css")
 			End
+		EndIf
+		If block.Contains("LastOpen")
+			shouldOpenAutomatically = ""
+			Local lastOpened:String = block.Get("LastOpen")
+			If FileType(lastOpened) = 1
+				shouldOpenAutomatically = lastOpened
+			EndIf
 		EndIf
 	End Method
 	
@@ -78,7 +99,7 @@ Type EditorWorld Extends TWorld
 		
 		Select editor.exp_toolbar.mode
 			Case MODE_EDIT
-				If editor.mouse.lastDown = MOUSE_LEFT
+				If Not editor.exp_menu.ParallaxingActive And editor.mouse.lastDown = MOUSE_LEFT
 					UpdateEditMode()
 				EndIf
 			Case MODE_COLLISION
@@ -180,6 +201,20 @@ Type EditorWorld Extends TWorld
 				UpdateScaling()
 			Default
 		EndSelect
+	End Method
+	
+	Method UpdateParallaxView()
+		Select useParallaxKey
+			Case KEY_LEFT
+				cam.position.x:- parallaxSpeed
+			Case KEY_RIGHT
+				cam.position.x:+ parallaxSpeed
+			Case KEY_UP
+				cam.position.y:- parallaxSpeed
+			Case KEY_DOWN
+				cam.position.y:+ parallaxSpeed
+			Default
+		End Select
 	End Method
 	
 	
@@ -441,6 +476,7 @@ Type EditorWorld Extends TWorld
 				dummy.layer = entity.layer
 				dummy.name = entity.name
 				dummy.visible = entity.visible
+				dummy.parallax = entity.parallax
 				dummy.selection.Init( dummy )
 				If editor.exp_toolbar.mode = MODE_EDIT
 					AddEntity( dummy )
@@ -555,18 +591,22 @@ Type EditorWorld Extends TWorld
 		RenderGrid()
 		
 		Local renderedSprites:Int
-		Select editor.exp_toolbar.mode
-			Case MODE_EDIT
-				renderedSprites = RenderEditMode()
-			Case MODE_COLLISION
-				RenderCollisionMode()
-			Case MODE_EVENT
-				RenderEventMode()
-			Default
-		End Select
-		RenderWorldBorder()
+		If editor.exp_menu.ParallaxingActive
+			RenderParallaxView()
+		Else
+			Select editor.exp_toolbar.mode
+				Case MODE_EDIT
+					renderedSprites = RenderEditMode()
+				Case MODE_COLLISION
+					RenderCollisionMode()
+				Case MODE_EVENT
+					RenderEventMode()
+				Default
+			End Select
+		EndIf
 		
-		'DebugRender( renderedSprites )
+		RenderWorldBorder()
+		DebugRender( renderedSprites )
 	EndMethod
 	
 	Method RenderEditMode:Int()
@@ -664,6 +704,30 @@ Type EditorWorld Extends TWorld
 		If editor.mouse.Dragging And editor.exp_toolbar.selected = 0
 			rect_selection.Render( cam )
 		EndIf
+	End Method
+	
+	Method RenderParallaxView()
+		Local i:TEntity
+		For Local layer:Int = 1 To MAX_LAYERS
+			For i = EachIn EntityList
+				If (i.layer = layer) And (i.parallax = 0)
+					If IsInView(i)
+						i.Render(cam, False)
+					EndIf
+				ElseIf (i.layer = layer)
+					i.Render(cam, True)
+				EndIf
+			Next
+		Next
+		
+		'Parallax InfoButton
+		ResetDrawing()
+		SetColor(100, 100, 130)
+		DrawRect(CANVAS_WIDTH-109, 7, 94, 22)
+		SetColor(200, 200, 250)
+		DrawRect(CANVAS_WIDTH-108, 8, 92, 20)
+		SetColor(50,50,100)
+		DrawText("Parallax", CANVAS_WIDTH-94, 11)
 	End Method
 	
 	
@@ -887,7 +951,13 @@ Type EditorWorld Extends TWorld
 '--------------------------------------------------------------------------
 	Method OnExit()
 	EndMethod
-
+	
+	Method SetMaxLayers(value:Int)
+		Super.SetMaxLayers(value)
+		SetSliderRange(editor.exp_options.prop_Layer, 1, MAX_LAYERS)
+	End Method
+	
+	
 '--------------------------------------------------------------------------
 ' * Overwrite original AddEntity to make sure there is no name twice
 '--------------------------------------------------------------------------

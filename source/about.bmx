@@ -17,7 +17,7 @@ Type AboutWindow
 	Method New()
 		Local editor:TEditor = TEditor.GetInstance()
 		Local style:Int = WINDOW_TITLEBAR|WINDOW_CLIENTCOORDS|WINDOW_CENTER
-		window = CreateWindow( "About Scope 2D", 0, 0, 414, 350, editor.window, style )
+		window = CreateWindow( "About Scope2D", 0, 0, 414, 350, editor.window, style )
 
 		imagePanel = CreatePanel( 0, 0, window.ClientWidth(), 233, window )
 		SetGadgetPixmap( imagePanel, LoadPixmap("source/ressource/About.png") )

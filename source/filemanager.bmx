@@ -58,7 +58,7 @@ Type SceneFile
 		If Not TEditor.GetInstance().world.NewScene()
 			Return False
 		EndIf
-		
+
 		Local general:CssBlock = file.GetBlock ("General")
 		If Not general
 			AppTitle = "Couldn't load map " + path + "."
@@ -80,10 +80,10 @@ Type SceneFile
 		
 		Local block:CssBlock
 		For block = EachIn file.Blocks.Values()
-			If block.id.StartsWith ("sprite")
-				CreateSpriteCss (block)
-			ElseIf block.id.StartsWith ("spriteF")
+			If block.id.StartsWith ("spriteF")
 				CreateSpriteCss (block, True)
+			ElseIf block.id.StartsWith ("sprite")
+				CreateSpriteCss (block)
 			ElseIf block.id.StartsWith ("poly")
 				CreatePolyCss (block)
 			ElseIf block.id.StartsWith ("baseline")
@@ -140,6 +140,10 @@ Type SceneFile
 					entity.scale.sx = data.GetFloat ("scalex", 1.0)
 				Case "scaley"
 					entity.scale.sy = data.GetFloat ("scaley", 1.0)
+				Case "flipX"
+					entity.flipH = data.GetInt ("flipX")
+				Case "flipY"
+					entity.flipV = data.GetInt ("flipY")
 				Case "rotation"
 					entity.rotation = data.GetFloat ("rotation")
 				Case "alpha"
@@ -152,10 +156,10 @@ Type SceneFile
 					entity.color.b = data.GetInt ("blue", 255)
 				Case "layer"
 					entity.layer = data.GetInt ("layer", 1)
+				Case "parallax"
+					entity.parallax = data.GetInt ("parallax", 0)
 				Default
 			End Select
-			entity.flipH = data.GetInt ("flipX")
-			entity.flipV = data.GetInt ("flipY")
 		Next
 		TEditor.GetInstance().world.AddEntity (entity)
 	End Method
@@ -294,8 +298,9 @@ Type SceneFile
 				If entity.color.g <> 255	Then stream.WriteString( "green:" + entity.color.g + sc)
 				If entity.color.b <> 255	Then stream.WriteString( "blue:" + entity.color.b + sc)
 				
-				If entity.flipH Then stream.WriteString( "flipX:" + Int(entity.flipH) + sc)
-				If entity.flipV Then stream.WriteString( "flipY:" + Int(entity.flipH) + sc)
+				If entity.flipH 			Then stream.WriteString( "flipX:" + Int(entity.flipH) + sc)
+				If entity.flipV 			Then stream.WriteString( "flipY:" + Int(entity.flipH) + sc)
+				If entity.parallax <> 0		Then stream.WriteString( "parallax:" + entity.parallax + sc)
 					
 				If entity.visible <> 1		Then stream.WriteString( "visible:" + entity.visible + sc )
 				If entity.layer > 1 		Then stream.WriteString( "layer:"   + entity.layer + sc )
@@ -336,8 +341,9 @@ Type SceneFile
 				If entity.color.g <> 255	Then stream.WriteString( "green:" + entity.color.g + sc)
 				If entity.color.b <> 255	Then stream.WriteString( "blue:" + entity.color.b + sc)
 				
-				If entity.flipH Then stream.WriteString( "flipX:" + Int(entity.flipH) + sc)
-				If entity.flipV Then stream.WriteString( "flipY:" + Int(entity.flipH) + sc)
+				If entity.flipH 			Then stream.WriteString( "flipX:" + Int(entity.flipH) + sc)
+				If entity.flipV				Then stream.WriteString( "flipY:" + Int(entity.flipH) + sc)
+				If entity.parallax <> 0		Then stream.WriteString( "parallax:" + entity.parallax + sc)
 						
 				If entity.visible <> 1		Then stream.WriteString( "visible:" + entity.visible + sc )
 				If entity.layer > 1 		Then stream.WriteString( "layer:"   + entity.layer + sc )
@@ -723,6 +729,22 @@ Type CssBlock
 	
 	Method Contains:Int (propName:String)
 		Return Properties.Contains (propName)
+	End Method
+	
+	Method ToString:String()
+		Local lineBreak:Byte = True
+		Local buffer:String = id + "{"
+		Local text:String
+		For text = EachIn Properties.Keys()
+			If lineBreak
+				buffer:+ "~n~t" + text + ":" + String(Properties.ValueForKey(text)) + ";"
+			Else
+				buffer = buffer + text + ":" + String(Properties.ValueForKey(text)) + ";"
+			EndIf
+		Next
+		If lineBreak Then buffer:+"~n"
+		buffer = buffer + "}~n"
+		Return buffer
 	End Method
 	
 EndType

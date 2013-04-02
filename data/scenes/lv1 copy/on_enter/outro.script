@@ -1,3 +1,0 @@
-moveActor: "Hero", 15, "right"
-wait: 500
-playOutro:

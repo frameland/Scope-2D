@@ -19,6 +19,7 @@ Type TEntity
 	Field layer:Int = 1
 	Field link:TLink
 	Field name:String
+	Field parallax:Int
 	Field static:Int = True
 	Field visible:Int = True
 	Field active:Int = False
@@ -77,22 +78,33 @@ Type TEntity
 '------------------------------------------------------------------------------
 ' Every Entity is rendered through this Method
 '------------------------------------------------------------------------------
-	Method Render( cam:TCamera )
-		If (image = Null)
+	Method Render( cam:TCamera, parallaxEnabled:Byte = False )
+		If (image = Null) Or (color.a = 0.0) Or (visible = False)
 			Return
 		EndIf
+		
+		Local dxParallax:Float
+		Local dyParallax:Float
+		If parallaxEnabled And parallax <> 0
+			dxParallax = (cam.position.x * parallax/100.0)
+			'dyParallax = cam.position.y * parallax/1000.0
+		EndIf
+		
 		Local sx:Float = 1.0
 		Local sy:Float = 1.0
 		If flipH Then sx = -1.0
 		If flipV Then sy = -1.0
-		.SetScale (scale.sx * cam.position.z * sx, scale.sy * cam.position.z * sy)
+		
+		Local x:Float = ((position.x + dxParallax) * cam.position.z) - (cam.position.x * cam.position.z) + cam.screen_center_x
+		Local y:Float = (position.y * cam.position.z) - (cam.position.y * cam.position.z) + cam.screen_center_y
+		
 		.SetRotation( rotation )
-		If (color.a = 0.0) Or (visible = False) Then Return
+		.SetScale (scale.sx * cam.position.z * sx, scale.sy * cam.position.z * sy)
+		
 		.SetAlpha( color.a )	
 		.SetColor( color.r, color.g, color.b )
 		.SetBlend( color.blend )
-		DrawImage( image, (position.x * cam.position.z) - (cam.position.x * cam.position.z) + cam.screen_center_x,..
-		(position.y * cam.position.z) - (cam.position.y * cam.position.z) + cam.screen_center_y)
+		DrawImage( image, x, y)
 	EndMethod
 
 
@@ -152,6 +164,10 @@ Type TEntity
 	
 	Method SetName( newName:String )
 		name = newName
+	End Method
+	
+	Method SetParallax (newParallax:Int)
+		parallax = newParallax
 	End Method
 	
 

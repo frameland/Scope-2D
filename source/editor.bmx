@@ -1,5 +1,6 @@
 Const WINDOW_MINX:Int = 680
 Const WINDOW_MINY:Int = 360
+Const SIDEBAR_WIDTH:Int = 220
 Global CANVAS_WIDTH:Int = 960
 Global CANVAS_HEIGHT:Int = 640
 Const STANDARD_LAYERS:Int = 10
@@ -10,7 +11,7 @@ Const STANDARD_LAYERS:Int = 10
 '------------------------------------------------------------------------------
 Type TEditor
 	
-	Const VERSION:String = "r5"
+	Const VERSION:String = "r6"
 	
 	Global instance:TEditor
 	Field window:TGadget
@@ -52,7 +53,7 @@ Type TEditor
 		?MacOS
 			flags = flags | WINDOW_FULLSCREEN
 		?
-		window = CreateWindow( "Scope 2D",0,0,CANVAS_WIDTH+200,CANVAS_HEIGHT,Null,flags )
+		window = CreateWindow( "Scope2D",0,0,CANVAS_WIDTH+SIDEBAR_WIDTH,CANVAS_HEIGHT,Null,flags )
 		HideGadget( window )
 		SetMinWindowSize( window, WINDOW_MINX, WINDOW_MINY )
 		world = New EditorWorld
@@ -74,6 +75,11 @@ Type TEditor
 		window_gridSize = New GridSizeWindow
 		window_sceneProps = New ScenePropertyWindow
 		ShowGadget( window )
+		
+		'Last Opened
+		If world.shouldOpenAutomatically <> ""
+			SceneFile.Instance().Open(world.shouldOpenAutomatically)
+		EndIf
 	EndMethod
 	
 	
@@ -117,8 +123,7 @@ Type TEditor
 '--------------------------------------------------------------------------			
 			Case EVENT_TIMERTICK
 				ToggleCanvas()
-				world.cam.Update()
-				UpdateCameraFocus()
+				Self.UpdateCamera()
 				RedrawGadget( exp_canvas.canvas )
 				
 			Case EVENT_GADGETPAINT
@@ -252,7 +257,14 @@ Type TEditor
 				moveMode = False
 				Select event.data
 					Case KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN
-						world.ProcessPixelMoving (event.data)
+						If exp_menu.ParallaxingActive
+							world.useParallaxKey = event.data
+							world.pressingParallaxKey = True
+							world.parallaxSpeed = 3
+						Else
+							world.ProcessPixelMoving (event.data)
+						EndIf
+						
 					Case KEY_Q
 						exp_toolbar.OnClick (7)
 					Case KEY_W
@@ -304,6 +316,10 @@ Type TEditor
 				Select event.data
 					Case 91, KEY_LALT
 						moveMode = False
+					Case KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN
+						If exp_menu.ParallaxingActive
+							world.pressingParallaxKey = False
+						EndIf
 					Default
 				End Select
 				world.cam.Update()
@@ -330,6 +346,8 @@ Type TEditor
 						exp_options.SetName()
 					Case exp_options.prop_Layer
 						exp_options.SetLayer()
+					Case exp_options.prop_Parallax
+						exp_options.SetParallax()
 					Case exp_options.prop_Red
 						exp_options.SetRed()
 					Case exp_options.prop_Green
@@ -361,7 +379,7 @@ Type TEditor
 ' * Resizing Window
 '--------------------------------------------------------------------------
 			Case EVENT_WINDOWSIZE
-				CANVAS_WIDTH = ClientWidth(window)-200
+				CANVAS_WIDTH = ClientWidth(window)-SIDEBAR_WIDTH
 				CANVAS_HEIGHT = ClientHeight(window)
 				world.cam.OnWindowResize()
 				exp_canvas.OnWindowResize( Self )
@@ -456,6 +474,23 @@ Type TEditor
 		EndIf
 	End Method
 	
+	Method UpdateCamera()
+		UpdateCameraFocus()
+		If world.pressingParallaxKey
+			world.parallaxSpeed:+ world.size.x/2000
+			world.parallaxSpeed = Min(world.size.x/200.0, world.parallaxSpeed)
+			world.UpdateParallaxView()
+		Else
+			If world.parallaxSpeed > 0.1
+				world.parallaxSpeed:* 0.9
+				world.UpdateParallaxView()
+			Else
+				world.parallaxSpeed = 0
+			EndIf
+		EndIf
+		world.cam.Update()
+	End Method
+	
 	Method UpdateCameraFocus()
 		Local cam:TCamera = world.cam
 		If cam.GetFocus()
@@ -515,11 +550,22 @@ Type TEditor
 			Self.is_ending = True
 			Return
 		EndIf
-		AppTitle = "Quit Scope 2D?"
+		AppTitle = "Quit Scope2D?"
 		If Proceed("All unsaved progress will be lost") = 1
 			Self.is_ending = True
+			SaveLastOpened()
 		EndIf
 	EndMethod
+	
+	Method SaveLastOpened()
+		Local config:ConfigFile = New ConfigFile
+		config.Load ("source/ressource/config.css")
+		Local block:CssBlock = config.GetBlock("Config")
+		block.SetKeyAndValue("LastOpen", SceneFile.Instance().currentlyOpened)
+		Local stream:TStream = WriteStream("source/ressource/config.css")
+		stream.WriteString(block.ToString())
+		stream.Close()
+	End Method
 	
 	
 '------------------------------------------------------------------------------	

@@ -5,5 +5,5 @@
 .bmx/
 data/
 *.tmproj
-*.png
+*config.css
 
