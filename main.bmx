@@ -34,6 +34,7 @@ Include "source/filemanager.bmx"
 Include "source/undo.bmx"
 Include "source/about.bmx"
 Include "source/toolwindows.bmx"
+Include "source/optionwindow.bmx"
 
 
 Local app:TEditor = New TEditor

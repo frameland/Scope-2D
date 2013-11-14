@@ -11,7 +11,7 @@ Const STANDARD_LAYERS:Int = 10
 '------------------------------------------------------------------------------
 Type TEditor
 	
-	Const VERSION:String = "r6"
+	Const VERSION:String = "r7"
 	
 	Global instance:TEditor
 	Field window:TGadget
@@ -37,6 +37,7 @@ Type TEditor
 	Field window_setLayer:LayerSetterWindow
 	Field window_gridSize:GridSizeWindow
 	Field window_sceneProps:ScenePropertyWindow
+	Field window_options:OptionWindow
 	Field zoomMX:Int
 	Field zoomMY:Int
 
@@ -74,6 +75,7 @@ Type TEditor
 		window_setLayer = New LayerSetterWindow
 		window_gridSize = New GridSizeWindow
 		window_sceneProps = New ScenePropertyWindow
+		window_options = New OptionWindow
 		ShowGadget( window )
 		
 		'Last Opened
@@ -88,6 +90,7 @@ Type TEditor
 '	Returns: /
 '------------------------------------------------------------------------------	
 	Method OnEvent( event:TEvent )
+
 '--------------------------------------------------------------------------
 ' * If activeWindow <> 1 (main_window) update another window
 '--------------------------------------------------------------------------
@@ -105,6 +108,9 @@ Type TEditor
 				Return
 			Case 5
 				window_sceneProps.OnEvent( event )
+				Return
+			Case 6
+				window_options.OnEvent( event)
 				Return
 			Default
 		End Select
@@ -410,7 +416,7 @@ Type TEditor
 ' * Go to gfxChooser or back (with SPACE)
 '--------------------------------------------------------------------------
 	Method GoToChooseMode()
-		If (state = 1) And (exp_toolbar.mode = MODE_EDIT) 
+		If (state = 1)
 			editMode = False
 			state = 3
 			world.gfxChooseWorld.OnEnter()
@@ -529,12 +535,14 @@ Type TEditor
 	Method EndProgram()
 		If world.EntityList.IsEmpty() Then
 			Self.is_ending = True
+			SaveConfig()
 			Return
 		EndIf
 		AppTitle = "Quit Scope2D?"
 		If Proceed("All unsaved progress will be lost") = 1
 			Self.is_ending = True
 			SaveLastOpened()
+			SaveConfig()
 		EndIf
 	EndMethod
 	
@@ -543,6 +551,18 @@ Type TEditor
 		config.Load ("source/ressource/config.css")
 		Local block:CssBlock = config.GetBlock("Config")
 		block.SetKeyAndValue("LastOpen", SceneFile.Instance().currentlyOpened)
+		Local stream:TStream = WriteStream("source/ressource/config.css")
+		stream.WriteString(block.ToString())
+		stream.Close()
+	End Method
+	
+	Method SaveConfig()
+		Local config:ConfigFile = New ConfigFile
+		config.Load ("source/ressource/config.css")
+		Local block:CssBlock = config.GetBlock("Config")
+		block.SetKeyAndValue("gfxdir", GfxWorkingDir)
+		block.SetKeyAndValue("mapdir", MapWorkingDir)
+		block.SetKeyAndValue("DebugInfo", RenderDebugInfo)
 		Local stream:TStream = WriteStream("source/ressource/config.css")
 		stream.WriteString(block.ToString())
 		stream.Close()

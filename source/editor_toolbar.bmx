@@ -29,7 +29,9 @@ Type ExpToolbar Extends TEditorExpansion
 		AddGadgetItem( toolbar,"Move", GADGETITEM_TOGGLE, 12 )
 		AddGadgetItem( toolbar,"Scale", GADGETITEM_TOGGLE, 14 )
 		AddGadgetItem( toolbar,"Rotate", GADGETITEM_TOGGLE, 16 )
-		Local tips:String[] = ["New","Open","Save","","Undo","Redo","","Select","Move","Scale","Rotate"]
+		AddGadgetItem( toolbar,"",0, GADGETICON_BLANK )
+		AddGadgetItem( toolbar,"Select", 0, 18)
+		Local tips:String[] = ["New","Open","Save","","Undo","Redo","","Select (Q)","Move (W)","Scale (E)","Rotate (R)", "", "Show Graphics (Spacebar)"]
 		SetToolbarTips( toolbar, tips )
 	EndMethod
 
@@ -52,6 +54,8 @@ Type ExpToolbar Extends TEditorExpansion
 				selected = data - 7
 				SetSelected()
 				editor.exp_options.ChangeTab( selected )
+			Case 12
+				editor.GoToChooseMode()
 			Default
 		End Select
 	End Method
@@ -90,7 +94,9 @@ Type ExpToolbar Extends TEditorExpansion
 		Local i:Int
 		Local items:Int = CountGadgetItems( toolbar )
 		For i = 0 Until items
-			DisableGadgetItem( toolbar, i )
+			If i <> 12
+				DisableGadgetItem( toolbar, i )
+			EndIf
 		Next
 	End Method
 	

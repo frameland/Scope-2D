@@ -56,7 +56,7 @@ Type EditorWorld Extends TWorld
 
 		If Not FileType(configPath)
 			Local stream:TStream = WriteStream(configPath)
-			stream.WriteString("Config {~n~tgfxdir:;~n~tmapdir:;~n}~n")
+			stream.WriteString("Config {~n~tgfxdir:data/graphics/;~n~tmapdir:data/scenes/;~n}~n")
 			stream.Close()
 		EndIf
 		
@@ -68,12 +68,6 @@ Type EditorWorld Extends TWorld
 		MapWorkingDir = block.Get("mapdir")
 		RenderDebugInfo = block.GetInt("DebugInfo", 0)
 
-		If (GfxWorkingDir = "") Or (MapWorkingDir = "")
-			AppTitle = "Folder Setup"
-			Notify ("Scope2D wants to know where your graphics and scenes are located. Type the path to these in the gfxdir and mapdir properties.")
-			OpenUrl ("source/ressource/config.css")
-			End
-		EndIf
 		If block.Contains("LastOpen")
 			shouldOpenAutomatically = ""
 			Local lastOpened:String = block.Get("LastOpen")
@@ -999,10 +993,10 @@ Type TGraphicChooseWorld
 '--------------------------------------------------------------------------
 	Method CreateEntity()
 		Local entity:TEntity = New TEntity
-		Local posX:Float = savedMouseX'editor.world.cam.position.X
-		Local posY:Float = savedMouseY'editor.world.cam.position.Y
+		Local posX:Float = editor.world.cam.position.X
+		Local posY:Float = editor.world.cam.position.Y
 		entity.SetPosition( posX, posY )
-		entity.SetLayer (editor.world.MAX_LAYERS/2)
+		entity.SetLayer (editor.world.MAX_LAYERS)
 		lastCreated = SelectedGraphic()
 		entity.SetImage ( GraphicsPath[lastCreated] )
 		TSelection.ClearSelected( editor.world.EntityList )
@@ -1018,7 +1012,7 @@ Type TGraphicChooseWorld
 		Local entity:TEntity = New TEntity
 		entity.SetPosition( posX, posY )
 		entity.SetImage ( GraphicsPath[lastCreated] )
-		entity.SetLayer (editor.world.MAX_LAYERS/2)
+		entity.SetLayer (editor.world.MAX_LAYERS)
 		TSelection.ClearSelected( editor.world.EntityList )
 		entity.selection.isSelected = True
 		editor.world.AddEntity( entity )
