@@ -11,7 +11,7 @@ Const STANDARD_LAYERS:Int = 10
 '------------------------------------------------------------------------------
 Type TEditor
 	
-	Const VERSION:String = "r6"
+	Const VERSION:String = "r5"
 	
 	Global instance:TEditor
 	Field window:TGadget
