@@ -11,7 +11,7 @@ Const STANDARD_LAYERS:Int = 10
 '------------------------------------------------------------------------------
 Type TEditor
 	
-	Const VERSION:String = "r5"
+	Const VERSION:String = "r6"
 	
 	Global instance:TEditor
 	Field window:TGadget
@@ -191,11 +191,7 @@ Type TEditor
 			Case EVENT_MOUSEUP
 				mouse.SetUp()
 				If (mouse.removeSelectionOnUp)
-					If exp_toolbar.mode = MODE_EDIT
-						TSelection.ClearSelected( world.EntityList )
-					ElseIf exp_toolbar.mode = MODE_COLLISION
-						TSelection.ClearSelected( world.Polys)
-					EndIf
+					TSelection.ClearSelected( world.EntityList )
 					mouse.removeSelectionOnUp = False
 				EndIf
 				If world.rect_selection.started Then
@@ -274,13 +270,6 @@ Type TEditor
 					Case KEY_R
 						exp_toolbar.OnClick (10)
 
-					Case KEY_1
-						exp_toolbar.OnClick (12)
-					Case KEY_2
-						exp_toolbar.OnClick (13)
-					Case KEY_3
-						exp_toolbar.OnClick (14)
-						
 					Case KEY_Y, KEY_Z
 						world.Undo()
 					
@@ -356,14 +345,6 @@ Type TEditor
 						exp_options.SetBlue()
 					Case exp_options.prop_Alpha
 						exp_options.SetAlpha()
-					Case exp_options.propIsFrontSprite
-						exp_options.ChangeTypeOfEntity()
-					Case exp_options.objectTriggering
-						exp_options.SetObjectTriggering()
-					Case exp_options.openScriptButtonEnter
-						exp_options.OpenScript ("on_enter")
-					Case exp_options.openScriptButtonAction
-						exp_options.OpenScript ("on_action")
 					Case exp_options.okButton
 						exp_options.SetTransforms()
 					Default

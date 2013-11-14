@@ -28,6 +28,7 @@ Type ExpMenu Extends TEditorExpansion
 	Const M_SAVEAS:Int = 15
 	Const M_QUIT:Int = 16
 	Const M_SCENE_SETTINGS:Int = 17
+	Const M_EXPORT_XML:Int = 18
 	
 	Const M_UNDO:Int = 21
 	Const M_REDO:Int = 22
@@ -75,6 +76,7 @@ Type ExpMenu Extends TEditorExpansion
 		CreateMenu( "", 0, file )
 		CreateMenu( "Save", M_SAVE, file, KEY_S, MODIFIER_COMMAND )
 		CreateMenu( "Save As...", M_SAVEAS, file, KEY_S, MODIFIER_COMMAND|MODIFIER_SHIFT )
+		CreateMenu( "Export as XML", M_EXPORT_XML, file)
 		CreateMenu( "", 0, file )
 		CreateMenu( "Properties", M_SCENE_SETTINGS, file, KEY_COMMA, MODIFIER_COMMAND)
 		?Win32
@@ -129,6 +131,8 @@ Type ExpMenu Extends TEditorExpansion
 				SceneFile.Instance().Save()
 			Case M_SAVEAS
 				SceneFile.Instance().SaveAs()
+			Case M_EXPORT_XML
+				SceneFile.Instance().ExportAsXml()
 			Case M_SCENE_SETTINGS
 				editor.window_sceneProps.Show()
 			?Win32
@@ -154,23 +158,11 @@ Type ExpMenu Extends TEditorExpansion
 			Case M_FLIP_VERTICAL
 				editor.world.ExecuteFlipping( False )
 			Case M_SELECTALL
-				If editor.exp_toolbar.mode = MODE_EDIT
-					TSelection.SelectAll (editor.world.EntityList)
-				ElseIf editor.exp_toolbar.mode = MODE_COLLISION
-					TSelection.SelectAll (editor.world.Polys)
-				ElseIf editor.exp_toolbar.mode = MODE_EVENT
-					TSelection.SelectAll (editor.world.Events)
-				EndIf
+				TSelection.SelectAll (editor.world.EntityList)
 				RedrawGadget( editor.window )
 				editor.exp_options.UpdatePropsUI()
 			Case M_SELECTNONE
-				If editor.exp_toolbar.mode = MODE_EDIT
-					TSelection.ClearSelected (editor.world.EntityList)
-				ElseIf editor.exp_toolbar.mode = MODE_COLLISION
-					TSelection.ClearSelected (editor.world.Polys)
-				ElseIf editor.exp_toolbar.mode = MODE_EVENT
-					TSelection.ClearSelected (editor.world.Events)
-				EndIf
+				TSelection.ClearSelected (editor.world.EntityList)
 				RedrawGadget( editor.window )
 				editor.exp_options.UpdatePropsUI()
 				

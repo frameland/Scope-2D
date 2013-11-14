@@ -5,7 +5,6 @@ Type SceneFile
 	
 	Global _instance:SceneFile
 	Field templateSprite:TEntity = New TEntity
-	Field templatePoly:Int[8]
 	Field templateProp:SceneProperty = New SceneProperty
 	Field lineNr:Int = 2
 	Field currentlyOpened:String
@@ -80,51 +79,16 @@ Type SceneFile
 		
 		Local block:CssBlock
 		For block = EachIn file.Blocks.Values()
-			If block.id.StartsWith ("spriteF")
-				CreateSpriteCss (block, True)
-			ElseIf block.id.StartsWith ("sprite")
+			If block.id.StartsWith ("sprite")
 				CreateSpriteCss (block)
-			ElseIf block.id.StartsWith ("poly")
-				CreatePolyCss (block)
-			ElseIf block.id.StartsWith ("baseline")
-				CreatePolyCss (block, True)
-			ElseIf block.id.StartsWith ("trigger")
-				CreateTrigger (block)
-			ElseIf block.id.StartsWith ("particle")
-				CreateTrigger (block, True)
-			ElseIf block.id.StartsWith ("savepoint")
-				CreateTrigger (block, False)
 			EndIf
 		Next
 		
 		Return True
 	End Method
 
-	Method CreatePolyCss (data:CssBlock, isBaseline:Byte = False)
-		Local array:String[] = data.GetArray ("data")
-		Local verts:Int[array.Length]
-		For Local i:Int = 0 Until verts.Length
-			verts[i] = Int (array[i])
-		Next
-		Local poly:TEntity = TEditor.GetInstance().world.CreatePoly (False)
-		If isBaseline
-			poly.isBaseline = True
-		EndIf
-		Local sX:Float = DistanceOfPoints (verts[0], verts[1], verts[2], verts[3]) / poly.image.width
-		Local sY:Float = DistanceOfPoints (verts[0], verts[1], verts[4], verts[5]) / poly.image.height
-		poly.SetScale (sx, sy)
-		poly.rotation = AngleOfPoints (verts[0], verts[1], verts[2], verts[3]) - 180
-		Local x:Float = (verts[0] + verts[2] + verts[4] + verts[6]) / 4.0 + 0.5
-		Local y:Float = (verts[1] + verts[3] + verts[5] + verts[7]) / 4.0 + 0.5
-		poly.SetPosition (x, y)
-		poly.name = data.Get("id")
-	End Method
-	
-	Method CreateSpriteCss (data:CssBlock, isFrontSprite:Byte = False)
+	Method CreateSpriteCss (data:CssBlock)
 		Local entity:TEntity = New TEntity
-		If isFrontSprite
-			entity.inFront = True
-		EndIf
 		Local prop:String
 		For prop = EachIn data.Properties.Keys()
 			Select prop
@@ -164,35 +128,6 @@ Type SceneFile
 		TEditor.GetInstance().world.AddEntity (entity)
 	End Method
 	
-	Method CreateTrigger (data:CssBlock, isParticle:Byte = False)
-		Local event:TEntity = TEditor.GetInstance().world.CreateEvent (False)
-		If isParticle
-			event.isParticle = True
-		EndIf
-		If data.id.StartsWith("savepoint")
-			event.name = data.id
-		EndIf
-		Local prop:String
-		For prop = EachIn data.Properties.Keys()
-			Select prop
-				Case "effect"
-					event.name = data.Get ("effect")
-				Case "id"
-					event.name = data.Get ("id")
-				Case "x"
-					event.position.x = data.GetInt ("x")
-				Case "y"
-					event.position.y = data.GetInt ("y")
-				Case "radius"
-					event.scale.sx = data.GetInt ("radius") / Float(event.image.width)
-					event.scale.sy = event.scale.sx
-				Case "allowObjectTriggering"
-					event.allowObjectTriggering = data.GetInt("allowObjectTriggering")
-				Default
-			End Select
-		Next
-	End Method
-	
 	
 '--------------------------------------------------------------------------
 ' * Save SceneFile: If file already exist it gets overwritten
@@ -208,7 +143,6 @@ Type SceneFile
 		name = NameCssFile (name)
 		currentlyOpened = name
 		WriteCssFile( name )
-		RemoveEmptyScripts()
 	End Method
 
 	Method SaveAs()
@@ -218,7 +152,6 @@ Type SceneFile
 		name = NameCssFile (name)
 		currentlyOpened = name
 		WriteCssFile( name )
-		RemoveEmptyScripts()
 	End Method
 	
 	Method NameCssFile:String (name:String)
@@ -227,34 +160,10 @@ Type SceneFile
 		Return name
 	End Method
 	
-	Method RemoveEmptyScripts()
-		If currentlyOpened = ""
-		        Return
-		EndIf
-	
-		Local mapDir:String = ExtractDir(currentlyOpened)
-		Local onActionDir:String = mapDir + "/on_action/"
-		Local onEnterDir:String = mapDir + "/on_enter/"
-		Local actionDirContents:String[] = LoadDir(onActionDir)
-		Local enterDirContents:String[] = LoadDir(onEnterDir)
-	
-		Local file:String
-		For file = EachIn actionDirContents
-		        If file.EndsWith(".script")
-		                Local scriptFile:String = LoadString(onActionDir + file)
-		                If scriptFile.Length = 0
-		                        DeleteFile(onActionDir + file)
-		                EndIf
-		        EndIf
-		Next
-		For file = EachIn enterDirContents
-		        If file.EndsWith(".script")
-		                Local scriptFile:String = LoadString(onEnterDir + file)
-		                If scriptFile.Length = 0
-		                        DeleteFile(onEnterDir + file)
-		                EndIf
-		        EndIf
-		Next
+	Method NameXmlFile:String (name:String)
+		name = StripExt (name)
+		name = name + ".xml"
+		Return name
 	End Method
 	
 	
@@ -319,35 +228,118 @@ Type SceneFile
 			Next
 		Next
 		
-		'Front Sprites
-		i = 0
+		stream.Close()
+	End Method
+	
+	Method GetSceneProperties:String(format:String = "css")
+		Local returnString:String
+		Local prop:String
+		Local val:String
+		Local i:SceneProperty
+		
+		Select format
+			Case "css"
+				returnString:+ "General{"
+				returnString:+ "Width:" + Int (TEditor.GetInstance().world.size.x) + ";"
+				returnString:+ "Height:" + Int (TEditor.GetInstance().world.size.y) + ";"
+				returnString:+ "Layers:" + TEditor.GetInstance().world.MAX_LAYERS + ";"
+				returnString:+ "Sprites:" + GetSprites().Count() + ";"
+				returnString:+"}"
+				If SceneProperty.size > 1
+					returnString = returnString + "~nProperties{"
+					For i = EachIn SceneProperty.List
+						prop = GadgetText (i.labelProperty)
+						If (prop = "Property") Or (prop = "") Continue
+						val = GadgetText (i.labelValue)
+						returnString = returnString + prop + ":" + val + ";"
+					Next
+					returnString = returnString + "}"
+				EndIf
+
+				Local j:NormalSceneProperty
+				For j = EachIn SceneProperty.List
+			        prop = GadgetText (j.labelProperty)
+			        val = GadgetText (j.labelValue)
+			        returnString = returnString + "~n" + prop + "{value:" + val + ";}"
+				Next
+				
+			Case "xml"
+				returnString:+ "<General>~n"
+				returnString:+ "<Width>" + Int (TEditor.GetInstance().world.size.x) + "</Width>"
+				returnString:+ "<Height>" + Int (TEditor.GetInstance().world.size.y) + "</Height>"
+				returnString:+ "<Layers>" + TEditor.GetInstance().world.MAX_LAYERS + "</Layers>"
+				returnString:+ "<Sprites>" + GetSprites().Count() + "</Sprites>"
+				returnString:+ "~n</General>"
+				If SceneProperty.size > 1
+					returnString = returnString + "~n<Properties>~n"
+					For i = EachIn SceneProperty.List
+						prop = GadgetText (i.labelProperty)
+						If (prop = "Property") Or (prop = "") Continue
+						val = GadgetText (i.labelValue)
+						returnString = returnString + "<" + prop + ">" + val + "</" + prop + ">"
+					Next
+					returnString = returnString + "~n</Properties>"
+				EndIf
+
+				Local j:NormalSceneProperty
+				For j = EachIn SceneProperty.List
+			        prop = GadgetText (j.labelProperty)
+			        val = GadgetText (j.labelValue)
+			        returnString = returnString + "~n<" + prop + ">" + val + "</" + prop + ">"
+				Next
+			Default
+		End Select
+		
+		Return returnString
+	End Method
+	
+	Method ExportAsXml()
+		Local name:String
+		name = RequestFile( "Name your file ...",, True, MapWorkingDir)
+		name = NameXmlFile(name)
+		If name = "" Then Return
+
+		Local world:EditorWorld = TEditor.GetInstance().world
+		Local stream:TStream = WriteStream(name)
+		If Not stream
+			RuntimeError ("Could not open filesetream " + name + " to export map to disk.")
+		EndIf
+
+		stream.WriteString (GetSceneProperties("xml") + "~n")
+		
+		Local text:String
+		Local entity:TEntity
+		Local i:Int
+		Local layerCounter:Int
+		
+		'Sprites
 		For layerCounter = 1 To world.MAX_LAYERS
-			For entity = EachIn Self.GetFrontSprites()
+			For entity = EachIn Self.GetSprites()
 				If (entity.layer <> layerCounter) Continue 
 				i:+1
-				stream.WriteString( "spriteF" + i + "{" )
+				stream.WriteString( "<sprite>~n")
 				Local p:Int
-				If entity.position.x <> 0.0 Then stream.WriteString( "x:" + Int(entity.position.x) + sc)
-				If entity.position.y <> 0.0 Then stream.WriteString( "y:" + Int(entity.position.y) + sc)
+				If entity.position.x <> 0.0 Then stream.WriteString( "<x>" + Int(entity.position.x) + "</x>")
+				If entity.position.y <> 0.0 Then stream.WriteString( "<y>" + Int(entity.position.y) + "</y>")
 				p = String(entity.scale.sx).Find(".")
-				If entity.scale.sx <> 1.0 	Then stream.WriteString( "scalex:" + String(entity.scale.sx)[..p+3] + sc)
+				If entity.scale.sx <> 1.0 	Then stream.WriteString( "<scalex>" + String(entity.scale.sx)[..p+3] + "</scalex>")
 				p = String(entity.scale.sy).Find(".")
-				If entity.scale.sy <> 1.0 	Then stream.WriteString( "scaley:" + String(entity.scale.sy)[..p+3] + sc)
+				If entity.scale.sy <> 1.0 	Then stream.WriteString( "<scaley>" + String(entity.scale.sy)[..p+3] + "</scaley>")
 				p = String(entity.rotation).Find(".")
-				If entity.rotation <> 0.0 	Then stream.WriteString( "rotation:" + String(entity.rotation)[..p+3] + sc)
+				If entity.rotation <> 0.0 	Then stream.WriteString( "<rotation>" + String(entity.rotation)[..p+3] + "</rotation>")
 				p = String(entity.color.a).Find(".")
-				If entity.color.a <> 1.0 	Then stream.WriteString( "alpha:" + String(entity.color.a)[..p+3] + sc)
-				If entity.color.r <> 255	Then stream.WriteString( "red:" + entity.color.r + sc)
-				If entity.color.g <> 255	Then stream.WriteString( "green:" + entity.color.g + sc)
-				If entity.color.b <> 255	Then stream.WriteString( "blue:" + entity.color.b + sc)
+				If entity.color.a <> 1.0 	Then stream.WriteString( "<alpha>" + String(entity.color.a)[..p+3] + "</alpha>")
+				If entity.color.r <> 255	Then stream.WriteString( "<red>" + entity.color.r + "</red>")
+				If entity.color.g <> 255	Then stream.WriteString( "<green>" + entity.color.g + "</green>")
+				If entity.color.b <> 255	Then stream.WriteString( "<blue>" + entity.color.b + "</blue>")
 				
-				If entity.flipH 			Then stream.WriteString( "flipX:" + Int(entity.flipH) + sc)
-				If entity.flipV				Then stream.WriteString( "flipY:" + Int(entity.flipH) + sc)
-				If entity.parallax <> 0		Then stream.WriteString( "parallax:" + entity.parallax + sc)
-						
-				If entity.visible <> 1		Then stream.WriteString( "visible:" + entity.visible + sc )
-				If entity.layer > 1 		Then stream.WriteString( "layer:"   + entity.layer + sc )
-				If entity.name		 		Then stream.WriteString( "name:"    + entity.name  + sc )
+				If entity.flipH 			Then stream.WriteString( "<flipX>" + Int(entity.flipH) + "</flipX>")
+				If entity.flipV 			Then stream.WriteString( "<flipY>" + Int(entity.flipH) + "</flipY>")
+				If entity.parallax <> 0		Then stream.WriteString( "<parallax>" + entity.parallax + "</parallax>")
+					
+				If entity.visible <> 1		Then stream.WriteString( "<visible>" + entity.visible + "</visible>" )
+				If entity.layer > 1 		Then stream.WriteString( "<layer>"   + entity.layer + "</layer>" )
+				If entity.name		 		Then stream.WriteString( "<name>"    + entity.name  + "</name>" )
 
 				If entity.texturePath
 					If entity.texturePath.StartsWith(GfxWorkingDir) Then
@@ -355,131 +347,16 @@ Type SceneFile
 					Else
 						text = entity.texturePath
 					EndIf
-					stream.WriteString( "image:" + text + sc )
+					stream.WriteString( "<image>" + text + "</image>" )
 				EndIf
 
-				stream.WriteString ("}~n")
+				stream.WriteString ("~n</sprite>~n")
 			Next
-		Next
-		
-		'Polys
-		i = 0
-		Local thePolys:TList = GetPolys()
-		For entity = EachIn thePolys
-			i:+1
-			stream.WriteString ("poly" + i + "{data:")
-			Local verts:Int[] = entity.GetVertices()
-			For Local i:Int = 0 Until verts.Length-1
-				stream.WriteString (verts[i] + ",")
-			Next
-			stream.WriteString (verts[verts.Length-1])
-			If entity.name <> ""
-				stream.WriteString (";id:" + entity.name)
-			EndIf
-			stream.WriteString (";}~n")
-		Next
-		
-		'Baselines
-		i = 0
-		Local theBaselines:TList = GetBaselines()
-		For entity = EachIn theBaselines
-			i:+1
-			stream.WriteString ("baseline" + i + "{data:")
-			Local verts:Int[] = entity.GetVertices()
-			For Local i:Int = 0 Until verts.Length-1
-				stream.WriteString (verts[i] + ",")
-			Next
-			stream.WriteString (verts[verts.Length-1])
-			If entity.name <> ""
-				stream.WriteString (";id:" + entity.name)
-			EndIf
-			stream.WriteString (";}~n")
-		Next
-		
-		'Triggers
-		i = 0
-		Local theTriggers:TList = GetTriggers()
-		For entity = EachIn theTriggers
-			i:+1
-			stream.WriteString ("trigger" + i + "{")
-			stream.WriteString ("x:" + Int(entity.position.x) + ";")
-			stream.WriteString ("y:" + Int(entity.position.y) + ";")
-			stream.WriteString ("id:" + entity.name + ";")
-			stream.WriteString ("radius:" + Int(entity.scale.sx * entity.image.width) + ";")
-			If entity.allowObjectTriggering
-				stream.WriteString ("allowObjectTriggering:1;")
-			EndIf
-			stream.WriteString ("}~n")
-		Next
-		
-		'Particles
-		i = 0
-		Local theParticles:TList = GetParticles()
-		For entity = EachIn theParticles
-			If (entity.name = "")
-				AppTitle = "Unnamed Particle Effect at position x:" + Int(entity.position.x) + ", y:" + Int(entity.position.y)
-				Notify ("Particles must have a name! They have to be named the same as the effect id.")
-				Continue
-			EndIf
-			i:+1
-			stream.WriteString ("particle" + i + "{")
-			stream.WriteString ("effect:" + entity.name + ";")
-			stream.WriteString ("x:" + Int(entity.position.x) + ";")
-			stream.WriteString ("y:" + Int(entity.position.y) + ";")
-			stream.WriteString ("}~n")
-		Next
-		
-		'Savepoints
-		Local theSavepoints:TList = GetSavepoints()
-		For entity = EachIn theSavepoints
-		        stream.WriteString(entity.name + "{")
-		        stream.WriteString ("x:" + Int(entity.position.x) + ";")
-		        stream.WriteString ("y:" + Int(entity.position.y) + ";")
-				stream.WriteString ("}~n")
 		Next
 		
 		stream.Close()
 	End Method
-	
-	Method GetSceneProperties:String()
-		Local returnString:String = "General{"
-		Local prop:String
-		Local val:String
-		Local i:SceneProperty
 
-		returnString:+ "Width:" + Int (TEditor.GetInstance().world.size.x) + ";"
-		returnString:+ "Height:" + Int (TEditor.GetInstance().world.size.y) + ";"
-		returnString:+ "Layers:" + TEditor.GetInstance().world.MAX_LAYERS + ";"
-		returnString:+ "Sprites:" + GetSprites().Count() + ";"
-		returnString:+ "SpritesFront:" + GetFrontSprites().Count() + ";"
-		returnString:+ "Polys:" + GetPolys().Count() + ";"
-		returnString:+ "Baselines:" + GetBaselines().Count() + ";"
-		returnString:+ "Triggers:" + GetTriggers().Count() + ";"
-		returnString:+ "Particles:" + GetParticles().Count() + ";"
-		returnString:+ "Savepoints:" + GetSavepoints().Count() + ";"
-		returnString:+"}"
-		
-		If SceneProperty.size > 1
-			returnString = returnString + "~nProperties{"
-			For i = EachIn SceneProperty.List
-				prop = GadgetText (i.labelProperty)
-				If (prop = "Property") Or (prop = "") Continue
-				val = GadgetText (i.labelValue)
-				returnString = returnString + prop + ":" + val + ";"
-			Next
-			returnString = returnString + "}"
-		EndIf
-		
-		Local j:NormalSceneProperty
-		For j = EachIn SceneProperty.List
-		        prop = GadgetText (j.labelProperty)
-		        val = GadgetText (j.labelValue)
-		        returnString = returnString + "~n" + prop + "{value:" + val + ";}"
-		Next
-		
-		Return returnString
-	End Method
-	
 
 '--------------------------------------------------------------------------
 ' * Getters
@@ -488,82 +365,10 @@ Type SceneFile
 		Local sprites:TList = New TList
 		Local e:TEntity
 		For e = EachIn TEditor.GetInstance().world.EntityList
-			If Not e.InFront
-				sprites.AddLast (e)
-			EndIf
+			sprites.AddLast (e)
 		Next
 		Return sprites
 	End Method
-	
-	Method GetFrontSprites:TList()
-		Local sprites:TList = New TList
-		Local e:TEntity
-		For e = EachIn TEditor.GetInstance().world.EntityList
-			If e.InFront
-				sprites.AddLast (e)
-			EndIf
-		Next
-		Return sprites
-	End Method
-	
-	Method GetPolys:TList()
-		Local polys:TList = New TList
-		Local p:TEntity
-		For p = EachIn TEditor.GetInstance().world.Polys
-			If Not p.isBaseline
-				polys.AddLast (p)
-			EndIf
-		Next
-		Return polys
-	End Method
-	
-	Method GetBaselines:TList()
-		Local baselines:TList = New TList
-		Local p:TEntity
-		For p = EachIn TEditor.GetInstance().world.Polys
-			If p.isBaseline
-				baselines.AddLast (p)
-			EndIf
-		Next
-		Return baselines
-	End Method
-	
-	Method GetTriggers:TList()
-		Local triggers:TList = New TList
-		Local t:TEntity
-		For t = EachIn TEditor.GetInstance().world.Events
-			If Not t.isParticle And (t.name.StartsWith("savepoint") = False)
-				triggers.AddLast (t)
-			EndIf
-		Next
-		Return triggers
-	End Method
-	
-	Method GetParticles:TList()
-		Local particles:TList = New TList
-		Local p:TEntity
-		For p = EachIn TEditor.GetInstance().world.Events
-			If p.isParticle
-				particles.AddLast (p)
-			EndIf
-		Next
-		Return particles
-	End Method
-	
-	Method GetSavepoints:TList()
-        Local list:TList = New TList
-        Local event:TEntity
-        Local i:Int
-        For event = EachIn TEditor.GetInstance().world.Events
-			If event.name.StartsWith("savepoint")
-				i:+1
-				event.name = "savepoint" + i
-				list.AddLast(event)
-			EndIf
-        Next
-        Return list
-	End Method
-	
 	
 End Type
 

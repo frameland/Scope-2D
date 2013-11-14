@@ -50,19 +50,18 @@ Type TSelection
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
 			glEnable( GL_LINE_SMOOTH )
 		
-		DrawRect( (entity.position.x * cam.position.z) - (cam.position.x * cam.position.z) + cam.screen_center_x,..
-		(entity.position.y * cam.position.z) - (cam.position.y * cam.position.z) + cam.screen_center_y,..
-		entity.image.width, entity.image.height )
+		Local x:Float = (entity.position.x - cam.position.x) * cam.position.z + cam.screen_center_x
+		Local y:Float = (entity.position.y - cam.position.y) * cam.position.z + cam.screen_center_y
+		
+		DrawRect(x, y, entity.image.width, entity.image.height)
 
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 			glDisable (GL_LINE_SMOOTH)
 
 		SetHandle 4, 4
-		Local scale:Float = Max(cam.position.z,0.6)
-		SetScale scale, scale
-		DrawRect( (entity.position.x * cam.position.z) - (cam.position.x * cam.position.z) + cam.screen_center_x,..
-		(entity.position.y * cam.position.z) - (cam.position.y * cam.position.z) + cam.screen_center_y,..
-		8, 8 )
+		Local scale:Float = Max(cam.position.z, 0.6)
+		SetScale(scale, scale)
+		DrawRect(x, y, 5, 5)
 		SetHandle 0,0
 	End Method
 	
@@ -166,9 +165,12 @@ Type RectSelection
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
 		DrawRect( (startX * cam.position.z) - (cam.position.x * cam.position.z) + cam.screen_center_x,..
 		(startY * cam.position.z) - (cam.position.y * cam.position.z) + cam.screen_center_y,..
-		-(startX-endX)* cam.position.z, -(startY-endY)* cam.position.z )
+        -(startX-endX)* cam.position.z, -(startY-endY)* cam.position.z )
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 	End Method
 	
-	
 End Type
+
+
+
+
