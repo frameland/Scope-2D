@@ -137,6 +137,9 @@ Type TEntity
 		scale.Set( x, y )
 		size.Set( image.width * Pos(x), image.height * Pos(y) )
 		collision.UpdateBounds()
+		If selection
+			selection.UpdateRadius()
+		EndIf
 	EndMethod
 	
 	Method SetSize( x:Float, y:Float )
