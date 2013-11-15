@@ -1,10 +1,3 @@
-r6:
-- Scope2D will now automatically open the last opened scene
-- Added Parallaxing (View -> Show Parallaxing)
-- Added Toggle Bg Color
-- Fixed a bug where Front Sprites would not be loaded
-- Fixed a crash when Scope2D when a config.css would not exist
-
 r5:
 - Most importantly, the file format is now css!
 - In the upper right of the toolbar there are 3 icons now which represent modes:

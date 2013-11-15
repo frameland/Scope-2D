@@ -1,6 +1,6 @@
 Global GfxWorkingDir:String
 Global MapWorkingDir:String
-Global IsDeveloper:Int
+Global RenderDebugInfo:Int
 
 '------------------------------------------------------------------------------
 ' Editing Mode
@@ -19,7 +19,13 @@ Type EditorWorld Extends TWorld
 	Field parallaxSpeed:Float
 	Field pressingParallaxKey:Byte = False
 	
+	Field lockDragDirection:Int
+	Const LOCK_NO_DRAG:Int = 0
+	Const LOCK_DRAG_HORIZONTAL:Int = 1
+	Const LOCK_DRAG_VERTICAL:Int = 2
+	
 	Field shouldOpenAutomatically:String
+	
 	
 '------------------------------------------------------------------------------
 ' Initialize the World
@@ -50,22 +56,18 @@ Type EditorWorld Extends TWorld
 
 		If Not FileType(configPath)
 			Local stream:TStream = WriteStream(configPath)
-			stream.WriteString("Config {~n~tgfxdir:;~n~tmapdir:;~n}~n")
+			stream.WriteString("Config {~n~tgfxdir:data/graphics/;~n~tmapdir:data/scenes/;~n}~n")
 			stream.Close()
 		EndIf
 		
 		Local config:ConfigFile = New ConfigFile
 		config.Load ("source/ressource/config.css")
 		Local block:CssBlock = config.GetBlock("Config")
+		
 		GfxWorkingDir = block.Get("gfxdir")
 		MapWorkingDir = block.Get("mapdir")
-		IsDeveloper = block.GetInt("isDev", 0)
-		If (GfxWorkingDir = "") Or (MapWorkingDir = "")
-			AppTitle = "Folder Setup"
-			Notify ("Scope2D wants to know where your graphics and scenes are located. Type the path to these in the gfxdir and mapdir properties.")
-			OpenUrl ("source/ressource/config.css")
-			End
-		EndIf
+		RenderDebugInfo = block.GetInt("DebugInfo", 0)
+
 		If block.Contains("LastOpen")
 			shouldOpenAutomatically = ""
 			Local lastOpened:String = block.Get("LastOpen")
@@ -96,23 +98,10 @@ Type EditorWorld Extends TWorld
 			EndIf
 			Return
 		EndIf
-		
-		Select editor.exp_toolbar.mode
-			Case MODE_EDIT
-				If Not editor.exp_menu.ParallaxingActive And editor.mouse.lastDown = MOUSE_LEFT
-					UpdateEditMode()
-				EndIf
-			Case MODE_COLLISION
-				If editor.mouse.lastDown = MOUSE_LEFT
-					UpdateCollisionMode()
-				EndIf
-			Case MODE_EVENT
-				If editor.mouse.lastDown = MOUSE_LEFT
-					UpdateEventMode()
-				Endif
-			Default
-				Throw ("EditorWorld.Update: Unknown Mode (should be 0,1,2)")
-		End Select
+	
+		If Not editor.exp_menu.ParallaxingActive And editor.mouse.lastDown = MOUSE_LEFT
+			UpdateEditMode()
+		EndIf
 	EndMethod
 
 	Method UpdateEditMode()
@@ -143,62 +132,6 @@ Type EditorWorld Extends TWorld
 					EndIf
 				EndIf
 				UpdateRotating()
-			Default
-		EndSelect
-	End Method
-	
-	Method UpdateCollisionMode()
-		Select editor.exp_toolbar.selected
-			Case 0
-				UpdateSelection()
-			Case 1
-				If (NrOfSelectedEntities() = 0)
-					UpdateSelection()
-					If (NrOfSelectedEntities() = 1)
-						editor.mouse.removeSelectionOnUp = True
-					EndIf
-				EndIf
-				UpdateMove()
-			Case 2
-				If (NrOfSelectedEntities() = 0)
-					UpdateSelection()
-					If (NrOfSelectedEntities() = 1)
-						editor.mouse.removeSelectionOnUp = True
-					EndIf
-				EndIf
-				UpdateScaling()
-			Case 3
-				If (NrOfSelectedEntities() = 0)
-					UpdateSelection()
-					If (NrOfSelectedEntities() = 1)
-						editor.mouse.removeSelectionOnUp = True
-					EndIf
-				EndIf
-				UpdateRotating()
-			Default
-		EndSelect
-	End Method
-	
-	Method UpdateEventMode()
-		Select editor.exp_toolbar.selected
-			Case 0
-				UpdateSelection()
-			Case 1
-				If (NrOfSelectedEntities() = 0)
-					UpdateSelection()
-					If (NrOfSelectedEntities() = 1)
-						editor.mouse.removeSelectionOnUp = True
-					EndIf
-				EndIf
-				UpdateMove()
-			Case 2
-				If (NrOfSelectedEntities() = 0)
-					UpdateSelection()
-					If (NrOfSelectedEntities() = 1)
-						editor.mouse.removeSelectionOnUp = True
-					EndIf
-				EndIf
-				UpdateScaling()
 			Default
 		EndSelect
 	End Method
@@ -286,64 +219,54 @@ Type EditorWorld Extends TWorld
 		EndIf
 		editor.exp_options.UpdatePropsUI()
 	End Method
-
+	
 	Method UpdateMove()
-		If Not editor.mouse.Dragging Then Return
+		If Not editor.mouse.Dragging
+			Return
+		EndIf
 		
 		Local List:TList = GetRightEntityList()
 		
 		Local entity:TEntity
 		Local x:Int
 		Local y:Int
-
+		
 		If ButtonState( editor.exp_options.move_MoveStraight )
-			If Pos( editor.mouse.XDisplacement() ) > Pos( editor.mouse.YDisplacement() )
-				'Move X
-				For entity = EachIn List
-					If entity.selection.isSelected
-						x = Int( entity.memory_position.x + editor.mouse.XDisplacement() )
-						y = Int( entity.memory_position.y )
-						entity.position.Set(x, y)
+			Select lockDragDirection
+				Case LOCK_NO_DRAG
+					Local dragX:Int = Pos(editor.mouse.XDisplacement())
+					Local dragY:Int = Pos(editor.mouse.YDisplacement())
+					If dragX > dragY And dragX > dragY
+						lockDragDirection = LOCK_DRAG_HORIZONTAL
+					ElseIf dragY > dragX And dragY > dragX
+						lockDragDirection = LOCK_DRAG_VERTICAL
 					EndIf
-				Next
-				If editor.exp_toolbar.mode = MODE_COLLISION And entity.name <> ""
-					Local entityCollision:TEntity = GetEntityById (entity.name)
-					If entityCollision
-						Local difX:Int = entity.memory_position.x - entity.position.x
-						entityCollision.position.Set (entityCollision.memory_position.x - difX, entityCollision.memory_position.y)
-					EndIf
-				EndIf
-			Else 'Move Y
-				For entity = EachIn List
-					If entity.selection.isSelected
-						x = Int( entity.memory_position.x )
-						y = Int( entity.memory_position.y + editor.mouse.YDisplacement() )
-						entity.position.Set(x, y)
-					EndIf
-					If editor.exp_toolbar.mode = MODE_COLLISION And entity.name <> ""
-						Local entityCollision:TEntity = GetEntityById (entity.name)
-						If entityCollision
-							Local difY:Int = entity.memory_position.y - entity.position.y
-							entityCollision.position.Set (entityCollision.memory_position.x, entityCollision.memory_position.y - difY)
+				Case LOCK_DRAG_HORIZONTAL
+					For entity = EachIn List
+						If entity.selection.isSelected
+							x = Int( entity.memory_position.x + editor.mouse.XDisplacement() )
+							y = Int( entity.memory_position.y )
+							entity.position.Set(x, y)
 						EndIf
-					EndIf
-				Next
-			EndIf
-				
+					Next
+				Case LOCK_DRAG_VERTICAL
+					For entity = EachIn List
+						If entity.selection.isSelected
+							x = Int( entity.memory_position.x )
+							y = Int( entity.memory_position.y + editor.mouse.YDisplacement() )
+							entity.position.Set(x, y)
+						EndIf
+					Next
+				Default
+					
+			End Select
+			
 		Else 'Move in all Directions
 			For entity = EachIn List
 				If entity.selection.isSelected
 					x = Int( entity.memory_position.x + editor.mouse.XDisplacement() )
 					y = Int( entity.memory_position.y + editor.mouse.YDisplacement() )
 					entity.position.Set(x, y)
-					If editor.exp_toolbar.mode = MODE_COLLISION And entity.name <> ""
-						Local entityCollision:TEntity = GetEntityById (entity.name)
-						If entityCollision
-							Local difX:Int = entity.memory_position.x - entity.position.x
-							Local difY:Int = entity.memory_position.y - entity.position.y
-							entityCollision.position.Set (entityCollision.memory_position.x - difX, entityCollision.memory_position.y - difY)
-						EndIf
-					EndIf
 				EndIf
 			Next
 		EndIf
@@ -390,11 +313,7 @@ Type EditorWorld Extends TWorld
 		Local keepAspect:Byte = ButtonState( editor.exp_options.scale_KeepAspect )
 		For entity = EachIn List
 			If entity.selection.isSelected
-				If editor.exp_toolbar.mode = MODE_COLLISION 'Scaling x only
-					scaleFactorX = entity.memory_scale.sx + editor.mouse.XDisplacement() / 50
-					If scaleFactorX < 0.05 Then scaleFactorX = 0.05
-					scaleFactorY = 1.0
-				ElseIf keepAspect Or editor.exp_toolbar.mode = MODE_EVENT 'Scaling both, x + y axis
+				If keepAspect 'Scaling both, x + y axis
 					aspectRatio = entity.memory_scale.sx / entity.memory_scale.sy
 					scaleFactorX = entity.memory_scale.sx + editor.mouse.XDisplacement() / 50
 					scaleFactorY = scaleFactorX / aspectRatio
@@ -436,11 +355,6 @@ Type EditorWorld Extends TWorld
 		Local entity:TEntity
 		For entity = EachIn List
 			If entity.selection.isSelected Then
-				If editor.exp_toolbar.mode = MODE_EVENT
-				        Local mapDir:String = ExtractDir(SceneFile.Instance().currentlyOpened)
-				        DeleteFile(mapDir + "/on_action/" + entity.name + ".script")
-				        DeleteFile(mapDir + "/on_enter/" + entity.name + ".script")
-				EndIf
 				entity.Remove()
 			EndIf
 		Next
@@ -469,22 +383,12 @@ Type EditorWorld Extends TWorld
 				dummy.color.a = entity.color.a
 				dummy.size.Set( entity.size.width, entity.size.height )
 				dummy.collision = entity.collision.GetCopy( dummy )
-				dummy.isParticle = entity.isParticle
-				dummy.isBaseline = entity.isBaseline
-				dummy.allowObjectTriggering = entity.allowObjectTriggering
-				dummy.inFront = entity.inFront
 				dummy.layer = entity.layer
 				dummy.name = entity.name
 				dummy.visible = entity.visible
 				dummy.parallax = entity.parallax
 				dummy.selection.Init( dummy )
-				If editor.exp_toolbar.mode = MODE_EDIT
-					AddEntity( dummy )
-				ElseIf editor.exp_toolbar.mode = MODE_COLLISION
-					AddPoly (dummy)
-				ElseIf editor.exp_toolbar.mode = MODE_EVENT
-					AddEvent (dummy)
-				EndIf
+				AddEntity( dummy )
 				CloneList.AddLast( dummy )
 			EndIf
 		Next
@@ -551,6 +455,7 @@ Type EditorWorld Extends TWorld
 ' * Save properties before executing operations
 '--------------------------------------------------------------------------
 	Method InitOperation( id:Int)
+		lockDragDirection = LOCK_NO_DRAG
 		Local List:TList = GetRightEntityList()
 		Local entity:TEntity
 		Select id
@@ -562,12 +467,6 @@ Type EditorWorld Extends TWorld
 			Select id
 				Case 1
 					entity.SavePosition()
-					If editor.exp_toolbar.mode = MODE_COLLISION And entity.name <> ""
-						Local colEntity:TEntity = GetEntityById(entity.name)
-						If colEntity
-							colEntity.SavePosition()
-						EndIf
-					EndIf
 				Case 2
 					entity.SaveScale()
 				Case 3
@@ -594,15 +493,7 @@ Type EditorWorld Extends TWorld
 		If editor.exp_menu.ParallaxingActive
 			RenderParallaxView()
 		Else
-			Select editor.exp_toolbar.mode
-				Case MODE_EDIT
-					renderedSprites = RenderEditMode()
-				Case MODE_COLLISION
-					RenderCollisionMode()
-				Case MODE_EVENT
-					RenderEventMode()
-				Default
-			End Select
+			renderedSprites = RenderEditMode()
 		EndIf
 		
 		RenderWorldBorder()
@@ -620,7 +511,7 @@ Type EditorWorld Extends TWorld
 					i.Render( cam )
 					renderedSprites:+ 1
 					If i.selection.isSelected
-						i.selection.Render( cam )
+						i.selection.Render(cam)
 					ElseIf i.selection.isOverlapping
 						highlighted = i
 					EndIf
@@ -639,71 +530,6 @@ Type EditorWorld Extends TWorld
 		EndIf
 		
 		Return renderedSprites
-	End Method
-	
-	Method RenderCollisionMode()
-		Local i:TEntity
-		For Local layer:Int = 1 To MAX_LAYERS
-			For i = EachIn EntityList
-				If (i.layer = layer) And IsInView(i)
-					i.Render( cam )
-				EndIf
-			Next
-		Next
-		
-		Local highlighted:TEntity
-		For i = EachIn Polys
-			If IsInView (i)
-				i.Render (cam)
-				If i.selection.isSelected
-					i.selection.Render( cam )
-				ElseIf i.selection.isOverlapping
-					highlighted = i
-				EndIf
-			EndIf
-		Next
-		
-		If highlighted
-			SetScale( highlighted.scale.sx * cam.position.z, highlighted.scale.sy * cam.position.z )
-			SetRotation( highlighted.rotation )
-			highlighted.selection.Render( cam )
-		EndIf
-		
-		If editor.mouse.Dragging And editor.exp_toolbar.selected = 0
-			rect_selection.Render( cam )
-		EndIf
-	End Method
-	
-	Method RenderEventMode()
-		Local i:TEntity
-		For Local layer:Int = 1 To MAX_LAYERS
-			For i = EachIn EntityList
-				If (i.layer = layer) And IsInView(i)
-					i.Render( cam )
-				EndIf
-			Next
-		Next
-		
-		Local highlighted:TEntity
-		For i = EachIn Events
-			If IsInView (i)
-				i.Render (cam)
-				If i.selection.isSelected
-					i.selection.Render( cam )
-				ElseIf i.selection.isOverlapping
-					highlighted = i
-				EndIf
-			EndIf
-		Next
-		
-		If highlighted
-			SetScale( highlighted.scale.sx * cam.position.z, highlighted.scale.sy * cam.position.z )
-			highlighted.selection.Render( cam )
-		EndIf
-		
-		If editor.mouse.Dragging And editor.exp_toolbar.selected = 0
-			rect_selection.Render( cam )
-		EndIf
 	End Method
 	
 	Method RenderParallaxView()
@@ -732,6 +558,10 @@ Type EditorWorld Extends TWorld
 	
 	
 	Method DebugRender( renderedSprites:Int )
+		If Not RenderDebugInfo
+			Return
+		EndIf
+		
 		Local height:Int = 4
 		ResetDrawing()
 		SetHandle 0,0
@@ -852,13 +682,7 @@ Type EditorWorld Extends TWorld
 		If Not editor
 			Return Null
 		EndIf
-		If editor.exp_toolbar.mode = MODE_EDIT
-			Return EntityList
-		ElseIf editor.exp_toolbar.mode = MODE_COLLISION
-			Return Polys
-		ElseIf editor.exp_toolbar.mode = MODE_EVENT
-			Return Events
-		EndIf
+		Return EntityList
 		Return Null
 	End Method
 	
@@ -876,60 +700,14 @@ Type EditorWorld Extends TWorld
 ' * Right Click Create
 '--------------------------------------------------------------------------
 	Method OnRightClick()
-		Select editor.exp_toolbar.mode
-			Case MODE_EDIT
-				gfxChooseWorld.RecreateLastEntity (editor.mouse.WorldCoordX(), editor.mouse.WorldCoordY())
-				editor.exp_options.UpdatePropsUI()
-			Case MODE_COLLISION
-				CreatePoly()
-				editor.exp_options.UpdatePropsUI()
-			Case MODE_EVENT
-				CreateEvent()
-				editor.exp_options.UpdatePropsUI()
-			Default
-		End Select
+		gfxChooseWorld.RecreateLastEntity (editor.mouse.WorldCoordX(), editor.mouse.WorldCoordY())
+		editor.exp_options.UpdatePropsUI()
 	End Method
 
-	Method CreatePoly:TEntity (selectMe:Byte = True)
-		Local poly:TEntity = New TEntity
-		poly.SetImage ("source/ressource/rect.png", 0)
-		poly.color.a = 0.7
-		poly.SetColor (200, 100, 100)
-		poly.SetPosition (editor.mouse.WorldCoordX(), editor.mouse.WorldCoordY())
-		If selectMe
-			TSelection.ClearSelected (Polys)
-			editor.exp_options.OnTabChange()
-			editor.exp_options.ShowTransformAttributes (poly)
-			poly.selection.isSelected = True
-		EndIf
-		AddPoly (poly)
-		Return poly
-	End Method
-
-	Method CreateEvent:TEntity (selectMe:Byte = True)
-		Local event:TEntity = New TEntity
-		event.SetImage ("source/ressource/event.png", 0)
-		event.color.a = 0.7
-		event.SetColor (232, 214, 108)
-		event.SetPosition (editor.mouse.WorldCoordX(), editor.mouse.WorldCoordY())
-		If selectMe
-			TSelection.ClearSelected (Events)
-			editor.exp_options.OnTabChange()
-			editor.exp_options.ShowTransformAttributes (event)
-			event.selection.isSelected = True
-		EndIf
-		AddEvent (event)
-		Return event
-	End Method
-	
-	
 '--------------------------------------------------------------------------
 ' * Undo/Redo
 '--------------------------------------------------------------------------
 	Method Undo()
-		If editor.exp_toolbar.mode <> MODE_EDIT
-			Return
-		EndIf
 		editor.WorldState.Undo (EntityList)
 		editor.exp_options.ChangeTab( editor.exp_toolbar.selected )
 		editor.exp_options.UpdatePropsUI()
@@ -937,9 +715,6 @@ Type EditorWorld Extends TWorld
 	End Method
 	
 	Method Redo()
-		If editor.exp_toolbar.mode <> MODE_EDIT
-			Return
-		EndIf
 		editor.WorldState.Redo (EntityList)
 		editor.exp_options.ChangeTab( editor.exp_toolbar.selected )
 		editor.exp_options.UpdatePropsUI()
@@ -963,14 +738,6 @@ Type EditorWorld Extends TWorld
 '--------------------------------------------------------------------------
 	Method AddEntity( entity:TEntity )
 		entity.link = EntityList.AddLast( entity )
-	End Method
-	
-	Method AddPoly (poly:TEntity)
-		poly.link = Polys.AddLast (poly)
-	End Method
-	
-	Method AddEvent (event:TEntity)
-		event.link = Events.AddLast (event)
 	End Method
 	
 EndType
@@ -1226,10 +993,10 @@ Type TGraphicChooseWorld
 '--------------------------------------------------------------------------
 	Method CreateEntity()
 		Local entity:TEntity = New TEntity
-		Local posX:Float = savedMouseX'editor.world.cam.position.X
-		Local posY:Float = savedMouseY'editor.world.cam.position.Y
+		Local posX:Float = editor.world.cam.position.X
+		Local posY:Float = editor.world.cam.position.Y
 		entity.SetPosition( posX, posY )
-		entity.SetLayer (editor.world.MAX_LAYERS/2)
+		entity.SetLayer (editor.world.MAX_LAYERS)
 		lastCreated = SelectedGraphic()
 		entity.SetImage ( GraphicsPath[lastCreated] )
 		TSelection.ClearSelected( editor.world.EntityList )
@@ -1245,7 +1012,7 @@ Type TGraphicChooseWorld
 		Local entity:TEntity = New TEntity
 		entity.SetPosition( posX, posY )
 		entity.SetImage ( GraphicsPath[lastCreated] )
-		entity.SetLayer (editor.world.MAX_LAYERS/2)
+		entity.SetLayer (editor.world.MAX_LAYERS)
 		TSelection.ClearSelected( editor.world.EntityList )
 		entity.selection.isSelected = True
 		editor.world.AddEntity( entity )

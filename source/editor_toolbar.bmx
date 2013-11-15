@@ -8,7 +8,7 @@ Type ExpToolbar Extends TEditorExpansion
 	Field editor:TEditor
 	Field toolbar:TGadget
 	Field selected:Int = 0
-	Field mode:Int
+	Field mode:Int 'deprecated
 	
 '--------------------------------------------------------------------------
 ' * Init Gadgets
@@ -30,12 +30,9 @@ Type ExpToolbar Extends TEditorExpansion
 		AddGadgetItem( toolbar,"Scale", GADGETITEM_TOGGLE, 14 )
 		AddGadgetItem( toolbar,"Rotate", GADGETITEM_TOGGLE, 16 )
 		AddGadgetItem( toolbar,"",0, GADGETICON_BLANK )
-		AddGadgetItem( toolbar,"Edit Mode", GADGETITEM_TOGGLE, 18 )
-		AddGadgetItem( toolbar,"Collision Mode", GADGETITEM_TOGGLE, 20 )
-		AddGadgetItem( toolbar,"Event Mode", GADGETITEM_TOGGLE, 22 )
-		Local tips:String[] = ["New","Open","Save","","Undo","Redo","","Select","Move","Scale","Rotate","","Edit Mode","Collision Mode","Event Mode"]
+		AddGadgetItem( toolbar,"Select", 0, 18)
+		Local tips:String[] = ["New","Open","Save","","Undo","Redo","","Select (Q)","Move (W)","Scale (E)","Rotate (R)", "", "Show Graphics (Spacebar)"]
 		SetToolbarTips( toolbar, tips )
-		SelectMode()
 	EndMethod
 
 '--------------------------------------------------------------------------
@@ -57,10 +54,8 @@ Type ExpToolbar Extends TEditorExpansion
 				selected = data - 7
 				SetSelected()
 				editor.exp_options.ChangeTab( selected )
-			Case 12,13,14
-				mode = data - 12
-				SelectMode()
-				editor.exp_options.UpdatePropsUI()
+			Case 12
+				editor.GoToChooseMode()
 			Default
 		End Select
 	End Method
@@ -74,43 +69,6 @@ Type ExpToolbar Extends TEditorExpansion
 			DeselectGadgetItem( toolbar, i+7 )
 		Next
 		ToggleGadgetItem( toolbar, selected + 7 )
-	End Method
-	
-	Method SelectMode()
-		Local i:Int = 0
-		For i = 0 Until 3
-			DeselectGadgetItem( toolbar, i + 12)
-		Next
-		ToggleGadgetItem( toolbar, mode + 12)
-		
-		Select mode
-			Case MODE_EDIT
-				Self.Enable()
-				If editor And editor.exp_options
-					SetGadgetText (editor.exp_options.propIsFrontSprite, "in Front")
-				EndIf
-			Case MODE_COLLISION
-				DisableGadgetItem (toolbar, 4)
-				DisableGadgetItem (toolbar, 5)
-				EnableGadgetItem (toolbar, 7)
-				EnableGadgetItem (toolbar, 8)
-				EnableGadgetItem (toolbar, 9)
-				EnableGadgetItem (toolbar, 10)
-				SetGadgetText (editor.exp_options.propIsFrontSprite, "Baseline")
-			Case MODE_EVENT
-				If selected = 3
-					OnClick (8)
-				EndIf
-				DisableGadgetItem (toolbar, 4)
-				DisableGadgetItem (toolbar, 5)
-				EnableGadgetItem (toolbar, 7)
-				EnableGadgetItem (toolbar, 8)
-				EnableGadgetItem (toolbar, 9)
-				DisableGadgetItem (toolbar, 10)
-				SetGadgetText (editor.exp_options.propIsFrontSprite, "Particle")
-			Default
-				Throw ("Unknown mode!")
-		End Select
 	End Method
 	
 	
@@ -136,7 +94,9 @@ Type ExpToolbar Extends TEditorExpansion
 		Local i:Int
 		Local items:Int = CountGadgetItems( toolbar )
 		For i = 0 Until items
-			DisableGadgetItem( toolbar, i )
+			If i <> 12
+				DisableGadgetItem( toolbar, i )
+			EndIf
 		Next
 	End Method
 	

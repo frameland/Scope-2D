@@ -10,6 +10,7 @@ Type ExpMenu Extends TEditorExpansion
 	Field view:TGadget
 	Field game:TGadget
 	Field help:TGadget
+	Field tools:TGadget
 	
 	Field view_grid:TGadget
 	Field view_parallax:TGadget
@@ -20,6 +21,7 @@ Type ExpMenu Extends TEditorExpansion
 	Const M_VIEW:Int = 3
 	Const M_GAME:Int = 4
 	Const M_HELP:Int = 5
+	Const M_TOOLS:Int = 6
 	
 	Const M_NEW:Int = 11
 	Const M_OPEN:Int = 12
@@ -28,6 +30,7 @@ Type ExpMenu Extends TEditorExpansion
 	Const M_SAVEAS:Int = 15
 	Const M_QUIT:Int = 16
 	Const M_SCENE_SETTINGS:Int = 17
+	Const M_EXPORT_XML:Int = 18
 	
 	Const M_UNDO:Int = 21
 	Const M_REDO:Int = 22
@@ -45,6 +48,8 @@ Type ExpMenu Extends TEditorExpansion
 	Const M_GRIDSIZE:Int = 34
 	Const M_PARALLAX:Int = 36
 	Const M_BGCOLOR:Int = 37
+	
+	Const M_OPTIONS:Int = 41
 	
 	Const M_PLAY:Int = 51
 	Const M_SCRIPTING:Int = 52
@@ -67,6 +72,7 @@ Type ExpMenu Extends TEditorExpansion
 		file = CreateMenu( "File", M_FILE,  WindowMenu( editor.window ) )
 		edit = CreateMenu( "Edit", M_FILE,  WindowMenu( editor.window ) )
 		view = CreateMenu( "View", M_FILE,  WindowMenu( editor.window ) )
+		tools = CreateMenu( "Tools", M_TOOLS, WindowMenu(editor.window))
 		'game = CreateMenu( "Game", M_FILE,  WindowMenu( editor.window ) )
 		help = CreateMenu( "Help", M_FILE,  WindowMenu( editor.window ) )
 		'file
@@ -75,12 +81,14 @@ Type ExpMenu Extends TEditorExpansion
 		CreateMenu( "", 0, file )
 		CreateMenu( "Save", M_SAVE, file, KEY_S, MODIFIER_COMMAND )
 		CreateMenu( "Save As...", M_SAVEAS, file, KEY_S, MODIFIER_COMMAND|MODIFIER_SHIFT )
+		CreateMenu( "Export as XML", M_EXPORT_XML, file)
 		CreateMenu( "", 0, file )
 		CreateMenu( "Properties", M_SCENE_SETTINGS, file, KEY_COMMA, MODIFIER_COMMAND)
 		?Win32
 		CreateMenu( "", 0, file )
 		CreateMenu( "Quit", M_QUIT, file, KEY_Q, MODIFIER_COMMAND )
 		?
+		
 		'edit
 		CreateMenu( "Undo", M_UNDO, edit, KEY_Z, MODIFIER_COMMAND )
 		CreateMenu( "Redo", M_REDO, edit,KEY_Z, MODIFIER_COMMAND|MODIFIER_SHIFT )
@@ -93,6 +101,7 @@ Type ExpMenu Extends TEditorExpansion
 		CreateMenu( "", 0, edit )
 		CreateMenu( "Select All", M_SELECTALL, edit, KEY_A, MODIFIER_COMMAND )
 		CreateMenu( "Select None", M_SELECTNONE, edit, KEY_D, MODIFIER_COMMAND )
+		
 		'view
 		CreateMenu( "Birds Eye", M_RESETVIEW, view, KEY_R, MODIFIER_COMMAND  )
 		view_parallax = CreateMenu( "Show Parallaxing", M_PARALLAX, view, KEY_P, MODIFIER_COMMAND)
@@ -102,11 +111,16 @@ Type ExpMenu Extends TEditorExpansion
 		CreateMenu("Toggle Background Color", M_BGCOLOR, view)
 		CreateMenu( "", 0, view )
 		CreateMenu( "Set Grid Size...", M_GRIDSIZE, view )
+		
+		'tools
+		CreateMenu("Options", M_OPTIONS, tools)
+		
 		'game
 		'CreateMenu( "Play", M_PLAY, game )
 		'CreateMenu( "Script Editor", M_SCRIPTING, game )
 		'CreateMenu( "", 0, game )
 		'CreateMenu( "Settings", M_SETTINGS, game )
+		
 		'help
 		CreateMenu( "Docs", M_HELPUSER, help )
 		CreateMenu( "", 0, help )
@@ -129,6 +143,8 @@ Type ExpMenu Extends TEditorExpansion
 				SceneFile.Instance().Save()
 			Case M_SAVEAS
 				SceneFile.Instance().SaveAs()
+			Case M_EXPORT_XML
+				SceneFile.Instance().ExportAsXml()
 			Case M_SCENE_SETTINGS
 				editor.window_sceneProps.Show()
 			?Win32
@@ -154,23 +170,11 @@ Type ExpMenu Extends TEditorExpansion
 			Case M_FLIP_VERTICAL
 				editor.world.ExecuteFlipping( False )
 			Case M_SELECTALL
-				If editor.exp_toolbar.mode = MODE_EDIT
-					TSelection.SelectAll (editor.world.EntityList)
-				ElseIf editor.exp_toolbar.mode = MODE_COLLISION
-					TSelection.SelectAll (editor.world.Polys)
-				ElseIf editor.exp_toolbar.mode = MODE_EVENT
-					TSelection.SelectAll (editor.world.Events)
-				EndIf
+				TSelection.SelectAll (editor.world.EntityList)
 				RedrawGadget( editor.window )
 				editor.exp_options.UpdatePropsUI()
 			Case M_SELECTNONE
-				If editor.exp_toolbar.mode = MODE_EDIT
-					TSelection.ClearSelected (editor.world.EntityList)
-				ElseIf editor.exp_toolbar.mode = MODE_COLLISION
-					TSelection.ClearSelected (editor.world.Polys)
-				ElseIf editor.exp_toolbar.mode = MODE_EVENT
-					TSelection.ClearSelected (editor.world.Events)
-				EndIf
+				TSelection.ClearSelected (editor.world.EntityList)
 				RedrawGadget( editor.window )
 				editor.exp_options.UpdatePropsUI()
 				
@@ -211,6 +215,11 @@ Type ExpMenu Extends TEditorExpansion
 				editor.window_gridSize.Show()
 			Case M_BGCOLOR
 				ChangeBgColor()
+			
+			'tools
+			Case M_OPTIONS	
+				editor.window_options.Show()
+				
 			'help
 			Case M_ABOUT
 				editor.window_about.Show()
@@ -246,7 +255,7 @@ Type ExpMenu Extends TEditorExpansion
 			Case 0
 				SetClsColor(250, 250, 250)
 			Case 1
-				SetClsColor(127, 127, 127)
+				SetClsColor(55, 55, 55)
 			Default
 				Assert(False)
 		End Select

@@ -62,6 +62,8 @@ cam = TEditor.GetInstance().world.cam
 		up = True
 		down = False
 		Dragging = False
+		beginX = 0
+		beginY = 0
 	End Method
 
 '--------------------------------------------------------------------------
