@@ -1,3 +1,5 @@
+![alt text](http://frameland.at/scope2d/images/title-img.png)
+
 **General**  
 Scope2D is a level editor for 2D games. Unlike most other editors, which are tile-based in Scope2D you can use any image you like.
 
