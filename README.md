@@ -1,9 +1,5 @@
 **General**  
 Scope2D is a level editor for 2D games. Unlike most other editors, which are tile-based in Scope2D you can use any image you like.
-http://markuslangthaler.com/scope2d
-
-**How to use it**  
-Online documentation: http://markuslangthaler.com/scope2d/docs
 
 **Developers**  
 If you want to compile Scope2D yourself you will need the following:
